@@ -1,0 +1,98 @@
+#!/bin/bash
+
+function get_duplicate_lines() {
+    FILE_EXT='py';
+    OUT_FILENAME='dupes.txt';
+    cat $(find . -name "*.${FILE_EXT}") | sort | uniq -cd | sort -hr > "${OUT_FILENAME}"
+}
+
+function back_stuff_up() {
+    SRC_AND_DST=${@:1:2};
+    SRC_AND_DST=$(python3 -c "
+import sys
+src, dst = sys.argv[1:]
+src = src + '/' if src[-1] != '/' else src
+dst = dst[:-1] if dst[-1] == '/' else dst
+sys.stdout.write(f\"{src} {dst}\")
+" ${SRC_AND_DST});
+    EXCLUDES=${@:3};
+    EXCLUDE_FLAG=$(python3 -c "
+import sys
+excludes=sys.argv[1:]
+excludes_csv=excludes[0] if len(excludes)==1 else ' --exclude='.join([f\"{exc}\" for exc in excludes])
+
+sys.stdout.write('--exclude=' + excludes_csv)
+" ${EXCLUDES});
+    echo "[back_stuff_up]: Running rsync -av ${EXCLUDE_FLAG} ${SRC_AND_DST}";
+
+    rsync -av ${EXCLUDE_FLAG} ${SRC_AND_DST}
+}
+
+# ================================
+
+function make_vid() {
+  EXT=$1
+  SRC_DIR=$2
+  TARGET_PATH=$3
+
+  echo $EXT
+  echo $SRC_DIR
+  echo $TARGET_PATH
+  if [ -z $SRC_DIR ] || [ -z $TARGET_PATH ]
+  then
+    echo "[ERR] provide input-output paths!"
+    return
+  fi
+
+  if [ -z "${SRC_DIR}/*.${EXT}" ]
+  then
+    echo "[ERR] no jpgs found under $SRC_DIR"
+    return
+  fi
+
+  SLOWMO=1
+  if ! [ -z $4 ]
+  then
+    SLOWMO=$4
+  fi
+
+  # frame_rate is different than fps
+  ffmpeg -pattern_type glob \
+    -i "$SRC_DIR/*.${EXT}" \
+    -c:v libx264 \
+    -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2,fps=24,format=yuv420p" \
+    "${TARGET_PATH}"
+
+    #-vf "pad=ceil(iw/2)*2:ceil(ih/2)*2,fps=24,setpts=$SLOWMO*PTS,format=yuv420p" \
+}
+
+
+function merge_vids() {
+
+  SRC_VID_1=$1
+  SRC_VID_2=$2
+  OUT_VID_PATH=$3
+
+  if [ -z $SRC_VID_1 ] || [ -z $SRC_VID_2 ]
+  then
+    echo "[ERR] input video paths are invalid!"
+    return
+  fi
+
+  if [ -z $OUT_VID_PATH ]
+  then
+    echo "[ERR] need output path!"
+    return
+  fi
+
+  ffmpeg \
+    -i $SRC_VID_1 \
+    -i $SRC_VID_2 \
+    -filter_complex '[0:v]pad=iw*2:ih[int];[int][1:v]overlay=W/2:0[vid]' \
+    -map [vid] \
+    -c:v libx264 \
+    -crf 23 \
+    -preset veryfast \
+    $OUT_VID_PATH/merged.mp4
+}
+

@@ -1,0 +1,4 @@
+rofi.matching: fuzzy
+rofi.sort: true
+
+rofi.theme: ~/config/rofi/Monokai-onur.rasi

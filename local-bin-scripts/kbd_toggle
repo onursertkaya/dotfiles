@@ -1,0 +1,21 @@
+#!/bin/bash
+
+case \
+    $(setxkbmap -query | grep layout | cut -f2 -d ':' | xargs echo | cut -f1 -d ',') \
+    in
+us)
+    setxkbmap -layout se
+    notify-send 'kbd: se'
+    ;;
+se)
+    setxkbmap -layout tr;
+    notify-send 'kbd: tr'
+    ;;
+tr)
+    setxkbmap -layout us;
+    notify-send 'kbd: us'
+    ;;
+*)
+    notify-send "ERROR";
+    ;;
+esac

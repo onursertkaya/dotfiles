@@ -1,0 +1,28 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "run experiment",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: experiment",
+            "python": {
+                "pathMappings": [
+                    {
+                        // this is for the editor, to be able to find
+                        // files after launching the docker debugging session.
+                        "localRoot": "${workspaceFolder}",
+                        "remoteRoot": "/workdir"
+                    }
+                ],
+                "projectType": "general",
+            },
+        },
+        {
+            "name": "say hi",
+            "request": "launch",
+            "type": "node-terminal",
+            "command": "echo hello"
+        }
+    ]
+}

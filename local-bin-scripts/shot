@@ -1,0 +1,12 @@
+#!/bin/bash
+
+function shot() {
+    FILENAME=$(date +'%F_%H-%M-%S');
+    if [[ $1 != '' ]]; then
+        FILENAME=$1
+    fi
+    mkdir -p  ~/Pictures/ss;
+    scrot -s "${HOME}/Pictures/ss/$1.png";
+}
+
+shot

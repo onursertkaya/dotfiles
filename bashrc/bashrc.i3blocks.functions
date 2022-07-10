@@ -1,0 +1,99 @@
+#!/bin/bash
+
+function top_consumer() {
+    top_consumer=$(ps -eo cmd,%mem,%cpu --sort=-%cpu | sed -n '2 p' | cut -d ' ' -f 1-3)
+    echo $top_consumer
+}
+
+function get_weather() {
+  curl -Ss 'https://wttr.in?0&T&Q' | cut -c 16- | head -2 | xargs echo
+}
+
+function get_eth_ip() {
+  ADDRESS=$(ip a | grep -e 'inet.*enp0s31f6' | cut -d ' ' -f6);
+  if [ $ADDRESS != "" ]; then
+      echo 'eth:' "[$ADDRESS]";
+  else
+      echo 'eth: down';
+  fi
+}
+
+function get_wifi_ip() {
+  ADDRES=$(ip a | grep -e 'inet.*wlp0s20f3' | cut -d ' ' -f6);
+  if [ $ADDRESS != "" ]; then
+      A=$(iwconfig 2>&1);
+      ID=$(echo $A | grep -oE 'ESSID:.*\"' | xargs | sed 's/ESSID://g');
+      P=$(echo "scale=2;100*$(echo $A | grep -oE '[0-9]{2}\/[0-9]{2}')" | bc);
+      echo 'wifi:' $ID "[$ADDRESS]"  "(%$P)";
+   else
+      echo 'wifi: down'
+   fi
+}
+
+function get_battery_percent() {
+  PERCENT=$(upower -i $(upower -e | grep 'BAT') | \
+            egrep 'percentage:' | xargs echo | \
+            cut -d ' ' -f2 | cut -d '%' -f1);
+  echo $PERCENT
+}
+
+function warn_low_battery() {
+  PERCENT=$(get_battery_percent);
+  PERCENT=$1
+
+  HIBERNATE_SECONDS=60;
+  while [ $((PERCENT < 10)) == 1 ];
+  do
+      notify-send -u critical "Low battery" "will hibernate in ${HIBERNATE_SECONDS}s";
+      ((HIBERNATE_SECONDS-=5))
+      sleep 5;
+      #if [ ${HIBERNATE_SECONDS} == 5 ]; then
+      #    sudo systemctl status suspend;
+      #fi
+  done
+}
+
+function get_battery() {
+  upower -i $(upower -e | grep 'BAT') | \
+      grep -E "state|to\ full|percentage" | \
+      sed 's/state://g' | sed 's/percentage://g' | xargs
+}
+
+function get_disk() {
+  df -h | grep /dev/vg00/root | xargs | grep -oE '[0-9]{2,}G [0-9]{2,}%' | (printf 'disk: ' && cat)
+}
+
+function get_load() {
+  uptime | grep -oE 'load average: .*' | sed 's/,/ \|/g'
+}
+
+function get_timedate() {
+  date +'%F %H:%M:%S'
+}
+
+
+function get_network_usage() {
+  while true;
+  do
+    INTERVAL=1
+    OLD_DOWNLOAD_BYTES=$(ifconfig -a | grep -A 10 enp | grep 'RX packets' | xargs | cut -d ' ' -f5)
+    OLD_UPLOAD_BYTES=$(ifconfig -a | grep -A 10 enp | grep 'TX packets' | xargs | cut -d ' ' -f5)
+    sleep $INTERVAL
+
+    CUR_DOWNLOAD_BYTES=$(ifconfig -a | grep -A 10 enp | grep 'RX packets' | xargs | cut -d ' ' -f5)
+    CUR_UPLOAD_BYTES=$(ifconfig -a | grep -A 10 enp | grep 'TX packets' | xargs | cut -d ' ' -f5)
+
+    DOWN_DIFF_BYTES=$(($CUR_DOWNLOAD_BYTES - $OLD_DOWNLOAD_BYTES))
+    DOWN_DIFF_BYTES=$(($DOWN_DIFF_BYTES / $INTERVAL))
+
+    UP_DIFF_BYTES=$(($CUR_UPLOAD_BYTES - $OLD_UPLOAD_BYTES))
+    UP_DIFF_BYTES=$(($UP_DIFF_BYTES / $INTERVAL))
+
+    DOWN_DIFF_FRIENDLY=$(numfmt --to iec --format "%8.4f" $DOWN_DIFF_BYTES)
+    UP_DIFF_FRIENDLY=$(numfmt --to iec --format "%8.4f" $UP_DIFF_BYTES)
+
+    CURR_DATE=$(date +'%T')
+    echo -n "[${CURR_DATE}] d:${DOWN_DIFF_FRIENDLY}B/s  ||  u:${UP_DIFF_FRIENDLY}B/s" $'\r'
+  done
+}
+

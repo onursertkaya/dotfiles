@@ -1,0 +1,42 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "docker-run",
+            "label": "docker-run: experiment",
+            // first launches the container
+            "dockerRun": {
+                "containerName": "<container name>:",
+                "image": "<image name>:<image tag>",
+                "remove": true,
+                "env": {
+                    "PYTHONPATH": "/workdir", // repo root, must match launch.json mapping
+                },
+                "volumes": [
+                    {
+                        "localPath": "${env:HOME}/experiments",
+                        "containerPath": "/experiments",
+                        "permissions": "rw",
+                    },
+                    {
+                        "localPath": "${workspaceFolder}",
+                        "containerPath": "/workdir",  // repo root
+                        "permissions": "ro",
+                    },
+                    {
+                        "localPath": "${env:HOME}/data",
+                        "containerPath": "/data",
+                        "permissions": "ro",
+                    }
+                ],
+            },
+            // then runs the main *inside*
+            "python": {
+                "file": "/workdir/projects/sample/main.py", // relative to repo root
+                "args": ["--help"],
+                "debugPort": 5678,
+                "wait": true
+            }
+        }
+    ]
+}

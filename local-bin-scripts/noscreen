@@ -1,0 +1,8 @@
+#!/bin/bash
+
+function noscreen() {
+    laptop_screen=$('xrandr | egrep 'e?DP-?[0-9]*' -o | head -n 1');
+    xrandr --output $laptop_screen --auto --primary
+}
+
+noscreen

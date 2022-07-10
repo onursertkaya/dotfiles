@@ -1,0 +1,36 @@
+#!/bin/bash
+
+
+# Enable CTRL+S for forward search
+stty -ixon
+
+function parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+
+     # alternatively, with perl regex.
+     # (?<=) is a lookbehind, in this case looking for a '* ', which
+     # denotes the current branch in git. -o picks the matching part only.
+ 
+     # git branch | grep -o -P '(?<=\*\s)\w+'
+}
+
+PS1='[$(date +'%T')] ${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\w\[\033[00m\]\[\033[01;36m\]$(parse_git_branch)\[\033[00m\]\n\[\033[01;33m\]> \[\033[00m\] '
+
+# Subs
+alias vim='nvim'
+
+# CLI shortcuts
+alias pyh="PYTHONPATH=. python3"
+alias gita='git commit -a --amend'
+alias gitt='git log --graph --oneline --all --decorate'
+alias gitd='git diff HEAD^ --stat'
+alias gits='git status'
+alias docker_img='docker images --format="table {{.Repository}}:{{.Tag}}"'
+alias docker_img_sorted='docker images --format="table {{.Size}}\t{{.Repository}}:{{.Tag}}" | sort -hr'
+alias ff='find . -name'
+alias clar='clear'
+alias cler='clear'
+alias ku='minikube -- kubectl'
+
+alias shrug="echo ¯\\\_\(ツ\)_/¯"
+
