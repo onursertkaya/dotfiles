@@ -22,10 +22,15 @@
 
     // terminal
     "terminal.integrated.scrollback": -1,
+    "terminal.integrated.defaultProfile.linux": "bash",
 
     // python
     "python.defaultInterpreterPath": "/usr/bin/python3",
     "python.analysis.autoImportCompletions": false,
+    "python.analysis.typeCheckingMode": "basic",
+    "[python]": {
+      "editor.defaultFormatter": "ms-python.black-formatter"
+    },
 
     // gitlens
     "gitlens.hovers.currentLine.over": "line",
@@ -84,4 +89,3 @@
         ]
       },
 }
-
