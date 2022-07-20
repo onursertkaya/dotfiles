@@ -24,6 +24,26 @@ filetype plugin on
 set ttyfast                 " Speed up scrolling in Vim
 
 " === unused ===
-" set cc=80                  " set an 80 column border for good coding style
-" set cursorline             " highlight current cursorline
+" set cc=80                  " set an 80 column border for good coding style. (thick bar, ugly)
+" set cursorline             " highlight current cursorline. (distracting)
+
+
+" Useful shortcuts
+" w  jump by start of words (punctuation considered words)
+" W  jump by words (spaces separate words)
+" e  jump to end of words (punctuation considered words)
+" E  jump to end of words (no punctuation)
+" b  jump backward by words (punctuation considered words)
+" B  jump backward by words (no punctuation)
+" more: http://www.keyxl.com/aaa8263/290/VIM-keyboard-shortcuts.htm
+
+" Useful combinations
+" viw: view inner word
+" ciw: change inner word
+
+" TODO:
+" add keybindings for
+" - jump to symbol n/p * / #
+" - toggle for         :set nonumber / :set number
+" - clearing highlight :set noh 
 
