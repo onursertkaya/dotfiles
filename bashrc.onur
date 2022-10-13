@@ -1,0 +1,368 @@
+#!/bin/bash
+
+# This variable is duplicated in here and wrappers.bash!
+CONFIGS_DIR="${HOME}/conf"
+
+# Enable CTRL+S for forward search
+stty -ixon
+
+# Prompt
+PS1='[$(date +'%T')] ${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\w\[\033[00m\]\[\033[01;36m\]$(parse_git_branch)\[\033[00m\]\n\[\033[01;33m\]> \[\033[00m\] '
+
+# Replacement programs
+alias vim="nvim.appimage -u ${CONFIGS_DIR}/init.vim";
+
+# Convenient shortcuts
+alias pyh="PYTHONPATH=. python3"
+
+alias gita='git commit -a --amend;'
+alias gitt='git log --all --graph --pretty="format:%C(yellow)%h%Creset [%><(18,trunc)%Cblue%an%Creset] %s %C(auto)%d%Creset"';
+alias gitd='git diff HEAD^ --stat'
+alias gits='git status'
+# alias gitt='git log --graph --oneline --all --decorate'
+
+alias docker_img='docker images --format="table {{.Repository}}:{{.Tag}}"'
+alias docker_img_sorted='docker images --format="table {{.Size}}\t{{.Repository}}:{{.Tag}}" | sort -hr'
+
+alias f='fish'
+alias ff='find . -name'
+alias copy='xclip -selection clipboard'
+alias clar='clear'
+alias cler='clear'
+
+alias ku='minikube kubectl --';
+
+alias swed='setxkbmap -layout se';
+alias engl='setxkbmap -layout us';
+alias turk='setxkbmap -layout tr';
+alias shrug="echo ¯\\\_\(ツ\)_/¯";
+
+# Functions
+function show_i3_launch_commands() {
+  notify-send "commands (b)rowsers, (m)usic"
+}
+
+function shot() {
+    FILENAME=$(date +'%F_%H-%M-%S');
+    if [[ $1 != '' ]]; then
+        FILENAME=$1
+    fi
+    mkdir -p  ~/Pictures/ss;
+    scrot -s "${HOME}/Pictures/ss/$1.png";
+}
+
+function parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+
+     # alternatively, with perl regex.
+     # (?<=) is a lookbehind, in this case looking for a '* ', which
+     # denotes the current branch in git. -o picks the matching part only.
+ 
+     #git branch 2> /dev/null | grep -o -P '(?<=\*\s)\w+'
+}
+
+function top_consumer() {
+    top_consumer=$(ps -eo cmd,%mem,%cpu --sort=-%cpu | sed -n '2 p' | cut -d ' ' -f 1-3)
+    echo $top_consumer
+}
+
+function get_duplicate_lines() {
+    FILE_EXT='py';
+    OUT_FILENAME='dupes.txt';
+    cat $(find . -name "*.${FILE_EXT}") | sort | uniq -cd | sort -hr > "${OUT_FILENAME}"
+}
+
+function back_stuff_up() {
+    SRC_AND_DST=${@:1:2};
+    SRC_AND_DST=$(python3 -c "
+import sys
+src, dst = sys.argv[1:]
+src = src + '/' if src[-1] != '/' else src
+dst = dst[:-1] if dst[-1] == '/' else dst
+sys.stdout.write(f\"{src} {dst}\")
+" ${SRC_AND_DST});
+    EXCLUDES=${@:3};
+    EXCLUDE_FLAG=$(python3 -c "
+import sys
+excludes=sys.argv[1:]
+excludes_csv=excludes[0] if len(excludes)==1 else ' --exclude='.join([f\"{exc}\" for exc in excludes])
+
+sys.stdout.write('--exclude=' + excludes_csv)
+" ${EXCLUDES});
+    echo "[back_stuff_up]: Running rsync -av ${EXCLUDE_FLAG} ${SRC_AND_DST}";
+
+    rsync -av ${EXCLUDE_FLAG} ${SRC_AND_DST}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# mainly for i3blocks
+
+function get_weather() {
+  curl -Ss 'https://wttr.in?0&T&Q' | cut -c 16- | head -2 | xargs echo
+}
+
+function get_eth_ip() {
+  ADDRESS=$(ip a | grep -e 'inet.*enp0s31f6' | cut -d ' ' -f6);
+  if [ $ADDRESS != "" ]; then
+      echo 'eth:' "[$ADDRESS]";
+  else
+      echo 'eth: down';
+  fi
+}
+
+function get_wifi_ip() {
+  ADDRES=$(ip a | grep -e 'inet.*wlp0s20f3' | cut -d ' ' -f6);
+  if [ $ADDRESS != "" ]; then
+      A=$(iwconfig 2>&1);
+      ID=$(echo $A | grep -oE 'ESSID:.*\"' | xargs | sed 's/ESSID://g');
+      P=$(echo "scale=2;100*$(echo $A | grep -oE '[0-9]{2}\/[0-9]{2}')" | bc);
+      echo 'wifi:' $ID "[$ADDRESS]"  "(%$P)";
+   else
+      echo 'wifi: down'
+   fi
+}
+
+function get_battery_percent() {
+  PERCENT=$(upower -i $(upower -e | grep 'BAT') | \
+            egrep 'percentage:' | xargs echo | \
+            cut -d ' ' -f2 | cut -d '%' -f1);
+  echo $PERCENT
+}
+
+function warn_low_battery() {
+  PERCENT=$(get_battery_percent);
+  PERCENT=$1
+
+  HIBERNATE_SECONDS=60;
+  while [ $((PERCENT < 10)) == 1 ];
+  do
+      notify-send -u critical "Low battery" "will hibernate in ${HIBERNATE_SECONDS}s";
+      ((HIBERNATE_SECONDS-=5))
+      sleep 5;
+      #if [ ${HIBERNATE_SECONDS} == 5 ]; then
+      #    sudo systemctl status suspend;
+      #fi
+  done
+}
+
+function get_battery() {
+  upower -i $(upower -e | grep 'BAT') | \
+      grep -E "state|to\ full|percentage" | \
+      sed 's/state://g' | sed 's/percentage://g' | xargs
+}
+
+function get_disk() {
+  df -h | grep /dev/vg00/root | xargs | grep -oE '[0-9]{2,}G [0-9]{2,}%' | (printf 'disk: ' && cat)
+}
+
+function get_load() {
+  uptime | grep -oE 'load average: .*' | sed 's/,/ \|/g'
+}
+
+function get_timedate() {
+  date +'%F %H:%M:%S'
+}
+# ================================
+# Local, desktop stuff
+
+function i3_init() {
+  set -eu
+
+  CONNECTED=$(xrandr | grep ' connected' | cut -d ' ' -f1 | xargs echo);
+  IFS=' ' read -r -a CONNECTED <<< "$CONNECTED"
+  SCREEN_LAPTOP="${CONNECTED[0]}";
+  SCREEN_LEFT="${CONNECTED[1]}";
+  SCREEN_RIGHT="${CONNECTED[2]}";
+
+  echo $SCREEN_LAPTOP
+  echo $SCREEN_LEFT
+  echo $SCREEN_RIGHT
+
+  xrandr --output $SCREEN_LEFT   --auto --dpi 144 --right-of $SCREEN_LAPTOP --primary \
+         --output $SCREEN_RIGHT  --auto --dpi 144 --right-of $SCREEN_LEFT \
+         --output $SCREEN_LAPTOP --off
+  feh --bg-scale --no-fehbg "${HOME}/Downloads/snow-trees-top-view.jpg"
+}
+
+function i3_deinit() {
+  set -eu
+
+  CONNECTED=$(xrandr | grep ' connected' | cut -d ' ' -f1 | xargs echo);
+  IFS=' ' read -r -a CONNECTED <<< "$CONNECTED"
+  SCREEN_LAPTOP="${CONNECTED[0]}";
+  SCREEN_LEFT="${CONNECTED[1]}";
+  SCREEN_RIGHT="${CONNECTED[2]}";
+
+  echo $SCREEN_LAPTOP
+  echo $SCREEN_LEFT
+  echo $SCREEN_RIGHT
+
+  xrandr --output $SCREEN_LEFT --off --output $SCREEN_RIGHT --off --output DP-0 --auto --primary --dpi 144
+  
+  feh --bg-scale --no-fehbg "${HOME}/Downloads/snow-trees-top-view.jpg"
+}
+
+function i3_toggle() {
+  pacmd set-default-sink alsa_output.pci-0000_00_1f.3.analog-stereo
+  pacmd set-default-source alsa_input.pci-0000_00_1f.3.analog-stereo
+
+  pacmd set-sink-volume alsa_output.pci-0000_00_1f.3.analog-stereo 0
+  pacmd set-source-volume alsa_input.pci-0000_00_1f.3.analog-stereo 0
+
+  SCREEN_LAPTOP='DP-0'
+  if [[ $(xrandr | grep $SCREEN_LAPTOP | grep 'primary') ]]; then
+    i3_init
+  else
+    i3_deinit
+  fi
+}
+
+function i3_get_focused_ws() {
+  i3-msg -t get_workspaces | jq '.[] | select(.focused==true).name' | cut -d"\"" -f2
+}
+
+function network_usage() {
+  while true;
+  do
+    INTERVAL=1
+    OLD_DOWNLOAD_BYTES=$(ifconfig -a | grep -A 10 enp | grep 'RX packets' | xargs | cut -d ' ' -f5)
+    OLD_UPLOAD_BYTES=$(ifconfig -a | grep -A 10 enp | grep 'TX packets' | xargs | cut -d ' ' -f5)
+    sleep $INTERVAL
+
+    CUR_DOWNLOAD_BYTES=$(ifconfig -a | grep -A 10 enp | grep 'RX packets' | xargs | cut -d ' ' -f5)
+    CUR_UPLOAD_BYTES=$(ifconfig -a | grep -A 10 enp | grep 'TX packets' | xargs | cut -d ' ' -f5)
+
+    DOWN_DIFF_BYTES=$(($CUR_DOWNLOAD_BYTES - $OLD_DOWNLOAD_BYTES))
+    DOWN_DIFF_BYTES=$(($DOWN_DIFF_BYTES / $INTERVAL))
+
+    UP_DIFF_BYTES=$(($CUR_UPLOAD_BYTES - $OLD_UPLOAD_BYTES))
+    UP_DIFF_BYTES=$(($UP_DIFF_BYTES / $INTERVAL))
+
+    DOWN_DIFF_FRIENDLY=$(numfmt --to iec --format "%8.4f" $DOWN_DIFF_BYTES)
+    UP_DIFF_FRIENDLY=$(numfmt --to iec --format "%8.4f" $UP_DIFF_BYTES)
+
+    CURR_DATE=$(date +'%T')
+    echo -n "[${CURR_DATE}] d:${DOWN_DIFF_FRIENDLY}B/s  ||  u:${UP_DIFF_FRIENDLY}B/s" $'\r'
+  done
+}
+
+
+
+
+
+
+
+
+
+function quake_me() {
+  SCREEN_ID=$(i3-msg -t get_workspaces | jq '.[] | select(.focused==true).output')
+  SCREEN_ID=$(echo $SCREEN_ID | xargs echo)  # strip from " symbol
+
+  CURR_GEOMETRY=$(xdotool getwindowgeometry $(xdotool getactivewindow))
+  CURR_POS=$(grep -o 'Position:.*(' <<< $CURR_GEOMETRY | cut -d ' ' -f 2)
+  CURR_SIZE=$(grep -o 'Geometry:.*' <<< $CURR_GEOMETRY | cut -d ' ' -f 2)
+
+  USB_PORT=2
+  SCREEN_LEFT="DP-${USB_PORT}.2.1.8"
+  SCREEN_RIGHT="DP-${USB_PORT}.2.2.8"
+
+  WIDTH=1800
+  HEIGHT=500
+  RES_WIDTH=1920
+  OFFSET=0
+
+  i3-msg floating enable > /dev/null
+  i3-msg resize set $WIDTH $HEIGHT > /dev/null
+
+  if [[ $SCREEN_ID == $SCREEN_RIGHT ]]; then
+    OFFSET=$OFFSET+$RES_WIDTH
+  fi
+
+  POS_X=$(($OFFSET+(($RES_WIDTH-$WIDTH)/2)))
+  POS_Y=0
+
+  i3-msg move position $POS_X $POS_Y > /dev/null
+}
+
+
+
+
+function make_vid() {
+  EXT=$1
+  SRC_DIR=$2
+  TARGET_PATH=$3
+
+  echo $EXT
+  echo $SRC_DIR
+  echo $TARGET_PATH
+  if [ -z $SRC_DIR ] || [ -z $TARGET_PATH ]
+  then
+    echo "[ERR] provide input-output paths!"
+    return
+  fi
+
+  if [ -z "${SRC_DIR}/*.${EXT}" ]
+  then
+    echo "[ERR] no jpgs found under $SRC_DIR"
+    return
+  fi
+
+  SLOWMO=1
+  if ! [ -z $4 ]
+  then
+    SLOWMO=$4
+  fi
+
+  # frame_rate is different than fps
+  ffmpeg -pattern_type glob \
+    -i "$SRC_DIR/*.${EXT}" \
+    -c:v libx264 \
+    -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2,fps=24,format=yuv420p" \
+    "${TARGET_PATH}"
+
+    #-vf "pad=ceil(iw/2)*2:ceil(ih/2)*2,fps=24,setpts=$SLOWMO*PTS,format=yuv420p" \
+}
+
+
+function merge_vids() {
+
+  SRC_VID_1=$1
+  SRC_VID_2=$2
+  OUT_VID_PATH=$3
+
+  if [ -z $SRC_VID_1 ] || [ -z $SRC_VID_2 ]
+  then
+    echo "[ERR] input video paths are invalid!"
+    return
+  fi
+
+  if [ -z $OUT_VID_PATH ]
+  then
+    echo "[ERR] need output path!"
+    return
+  fi
+
+  ffmpeg \
+    -i $SRC_VID_1 \
+    -i $SRC_VID_2 \
+    -filter_complex '[0:v]pad=iw*2:ih[int];[int][1:v]overlay=W/2:0[vid]' \
+    -map [vid] \
+    -c:v libx264 \
+    -crf 23 \
+    -preset veryfast \
+    $OUT_VID_PATH
+}
+

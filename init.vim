@@ -5,7 +5,7 @@ set shiftwidth=4            " width for autoindents
 set tabstop=4               " number of columns occupied by a tab 
 
 syntax on                   " syntax highlighting
-filetype plugin indent on   " allow auto-indenting depending on file type
+filetype plugin indent on   "allow auto-indenting depending on file type
 
 set clipboard=unnamedplus   " using system clipboard
 
@@ -24,26 +24,33 @@ filetype plugin on
 set ttyfast                 " Speed up scrolling in Vim
 
 " === unused ===
-" set cc=80                  " set an 80 column border for good coding style. (thick bar, ugly)
-" set cursorline             " highlight current cursorline. (distracting)
+" set cc=80                  " set an 80 column border for good coding style
+" set cursorline              " highlight current cursorline
+
+" === mappings ===
+
+" https://superuser.com/questions/285500/how-to-run-unix-commands-from-within-vim
+" https://github.com/neovim/neovim/issues/6336
+nnoremap <C-p> :terminal fzf <enter>
 
 
-" Useful shortcuts
-" w  jump by start of words (punctuation considered words)
-" W  jump by words (spaces separate words)
-" e  jump to end of words (punctuation considered words)
-" E  jump to end of words (no punctuation)
-" b  jump backward by words (punctuation considered words)
-" B  jump backward by words (no punctuation)
-" more: http://www.keyxl.com/aaa8263/290/VIM-keyboard-shortcuts.htm
+" search symbol in dir (does not work yet.)
+" nnoremap <C-f> :terminal rg 
 
-" Useful combinations
-" viw: view inner word
-" ciw: change inner word
-
-" TODO:
-" add keybindings for
-" - jump to symbol n/p * / #
-" - toggle for         :set nonumber / :set number
-" - clearing highlight :set noh 
+" (viw)
+"     alternatively, (#) (V)isually selects the word under cursor.
+"     (*) works the same.
+"
+" ("sy)
+"     yank the (V)isual selection into the register s
+"
+" (<Esc>)
+"     hit Escape to get back to normal mode
+"
+" (:! rg )
+"     write the bash command
+"
+" (<C-r>s)
+"     paste the content of register s
+nnoremap <C-f> viw"sy<Esc>:! rg <C-r>s
 
