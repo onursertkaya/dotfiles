@@ -1,0 +1,5 @@
+# Ignore created files.
+rofi/config
+wrappers.bash
+bashrc.onur
+

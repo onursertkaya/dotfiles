@@ -3,36 +3,35 @@
 LAPTOP_SCREEN="DP-4"
 EXTERNAL_SCREEN="HDMI-0"
 
-# This variable is duplicated in here and bashrc.onur!
-CONFIGS_DIR="${HOME}/conf"
+CONF_ROOT=
 
 # Wrapping commands for startup apps. *_cc suffix is for ===============
 # "custom config." =====================================================
 
 alacritty_cc() {
-    ls "${CONFIGS_DIR}/alacritty.yml"
-    alacritty --config-file "${CONFIGS_DIR}/alacritty.yml"
+    ls "${CONF_ROOT}/alacritty.yml"
+    alacritty --config-file "${CONF_ROOT}/alacritty.yml"
 }
 
 compton_cc() {
-    compton --config "${CONFIGS_DIR}/compton.conf"
+    compton --config "${CONF_ROOT}/compton.conf"
 }
 
 dunst_cc() {
     # stop the dunst instance spawned by systemd, which
     # is installed by i3.
     systemctl stop dunst --user
-    dunst -conf "${CONFIGS_DIR}/dunstrc"
+    dunst -conf "${CONF_ROOT}/dunstrc"
 }
 
 # Custom commands ======================================================
 
 rofi_show() {
-    rofi -config "${CONFIGS_DIR}/rofi/config" -show run
+    rofi -config "${CONF_ROOT}/rofi/config" -show run
 }
 
 rofi_window() {
-    rofi -config "${CONFIGS_DIR}/rofi/config" -show window
+    rofi -config "${CONF_ROOT}/rofi/config" -show window
 }
 
 homescreen () {

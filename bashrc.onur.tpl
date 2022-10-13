@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# This variable is duplicated in here and wrappers.bash!
-CONFIGS_DIR="${HOME}/conf"
+CONF_ROOT=
 
 # Enable CTRL+S for forward search
 stty -ixon
@@ -10,7 +9,7 @@ stty -ixon
 PS1='[$(date +'%T')] ${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\w\[\033[00m\]\[\033[01;36m\]$(parse_git_branch)\[\033[00m\]\n\[\033[01;33m\]> \[\033[00m\] '
 
 # Replacement programs
-alias vim="nvim.appimage -u ${CONFIGS_DIR}/init.vim";
+alias vim="nvim.appimage -u ${CONF_ROOT}/init.vim";
 
 # Convenient shortcuts
 alias pyh="PYTHONPATH=. python3"
@@ -40,6 +39,10 @@ alias shrug="echo ¯\\\_\(ツ\)_/¯";
 # Functions
 function show_i3_launch_commands() {
   notify-send "commands (b)rowsers, (m)usic"
+}
+
+function alacritty_set_font() {
+    sed -i 's|size: .*|size: '$1'.0|g' $CONF_ROOT/alacritty.yml
 }
 
 function shot() {

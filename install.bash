@@ -1,27 +1,40 @@
 #!/bin/bash
-
-if [[ $0 != 'install.bash' ]]; then
-    echo 'Must be run as ./install.bash or bash install.bash (i.e. no nested paths.)'
-    exit 0
-fi
-
 set -eux
 
-cp wrappers.bash ~/.local/bin
+CONF_ROOT=${PWD}
+
+replace_conf_root() {
+    target_file=$1
+    tpl_file="${target_file}.tpl"
+    cp $tpl_file $target_file
+    sed -i "s|CONF_ROOT=|CONF_ROOT=${CONF_ROOT}|g" $target_file
+}
+
+
+# Configure and copy wrappers script
+wrappers_path="${CONF_ROOT}/wrappers.bash"
+replace_conf_root $wrappers_path
+cp $wrappers_path ~/.local/bin
+
+
+# Configure bashrc and add source statement
+bashrc_onur_path="${CONF_ROOT}/bashrc.onur"
+replace_conf_root $bashrc_onur_path
+
+bashrc_path="${HOME}/.bashrc"
+if [[ -z $(grep $bashrc_onur_path $bashrc_path) ]]; then
+    echo "source ${bashrc_onur_path}" >> $bashrc_path
+fi
+
+
+# Copy i3
 cp -r i3/ ~/.config
 
 
 # Configure rofi
-rofi_conf_path="${HOME}/conf/rofi/config"
-rofi_theme_path="${HOME}/conf/rofi/Monokai-onur.rasi"
-if [[ -z $(grep $rofi_theme_path $rofi_conf_path) ]]; then
-    echo "rofi.theme: ${rofi_theme_path}" >> ${HOME}/conf/rofi/config
-fi
-
-# Source bashrc
-bashrc_path="${HOME}/.bashrc"
-bashrc_onur_path="${PWD}/bashrc.onur"
-if [[ -z $(grep $bashrc_onur_path $bashrc_path) ]]; then
-    echo "source ${bashrc_onur_path}" >> ~/.bashrc
-fi
+rofi_conf_path="${CONF_ROOT}/rofi/config"
+rofi_conf_tpl_path="${rofi_conf_path}.tpl"
+rofi_theme_path="${CONF_ROOT}/rofi/Monokai-onur.rasi"
+cp $rofi_conf_tpl_path $rofi_conf_path
+echo "rofi.theme: ${rofi_theme_path}" >> ${rofi_conf_path}
 
