@@ -259,6 +259,9 @@ client.background       $green_black
 bindsym $mod+Return exec "wrappers.bash alacritty_cc"
 bindsym $mod+d exec "wrappers.bash rofi_show"
 bindsym $mod+c exec "wrappers.bash rofi_window"
+bindsym $mod+j exec "wrappers.bash homescreen"
+bindsym $mod+k exec "wrappers.bash noscreen"
+
 
 bindsym $mod+Mod1+l exec "i3lock -c 000000 && sleep 1 && xset dpms force off"
 bindsym $mod+l exec "sleep 1 && xset dpms force off"
