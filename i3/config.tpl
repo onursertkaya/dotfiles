@@ -60,13 +60,13 @@ bindsym $mod+Shift+Left  move left
 bindsym $mod+Shift+Down  move down
 bindsym $mod+Shift+Up    move up
 bindsym $mod+Shift+Right move right
-bindsym $mod+Ctrl+Shift+left  move workspace prev
-bindsym $mod+Ctrl+Shift+right move workspace next
+bindsym $mod+Ctrl+Shift+Left  move workspace prev
+bindsym $mod+Ctrl+Shift+Right move workspace next
 
 
 # workspaces
-bindsym $mod+ctrl+left  workspace prev
-bindsym $mod+ctrl+right workspace next
+bindsym $mod+Ctrl+Left  workspace prev
+bindsym $mod+Ctrl+Right workspace next
 
 set $ws1 "1"
 set $ws2 "2"
@@ -146,19 +146,16 @@ mode "resize" {
 }
 
 mode "move" {
-    set $term_upleft_x 19
-    set $term_upleft_y 10
-    set $term_downleft_x 19
-    set $term_downleft_y 611
-    set $term_upright_x 1061
-    set $term_upright_y 10
-    set $term_downright_x 1061
-    set $term_downright_y 611
-    bindsym q move position $term_upleft_x    $term_upleft_y;
-    bindsym w move position $term_upright_x   $term_upright_y;
-    bindsym a move position $term_downleft_x  $term_downleft_y;
-    bindsym s move position $term_downright_x $term_downright_y;
+    bindsym h move left  40 px; 
+    bindsym j move down  40 px; 
+    bindsym k move up    40 px; 
+    bindsym l move right 40 px; 
 
+    bindsym Left  move left  40 px; 
+    bindsym Down  move down  40 px; 
+    bindsym Up    move up    40 px; 
+    bindsym Right move right 40 px; 
+    
     bindsym c move position center
 
     bindsym Return mode "default"
@@ -232,7 +229,6 @@ exec --no-startup-id "wrappers.bash kbd_init"
 exec --no-startup-id "wrappers.bash compton_cc"
 exec --no-startup-id "wrappers.bash dunst_cc"
 
-# exec --no-startup-id "xrandr --output DP-4 --auto --primary"
 exec --no-startup-id "feh --bg-scale ~/Downloads/wp.jpg"
 exec --no-startup-id "pasystray"
 exec --no-startup-id "blueman-applet"
@@ -254,4 +250,6 @@ assign [class="Microsoft Teams - Preview"] number $ws5
 for_window [class="Spotify"] move to workspace $ws4
 for_window [class="Pulseeffects"] move to workspace $ws4
 for_window [workspace=$ws4] layout tabbed
+
+
 

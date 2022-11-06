@@ -27,8 +27,10 @@ if [[ -z $(grep $bashrc_onur_path $bashrc_path) ]]; then
 fi
 
 
-# Copy i3
-cp -r i3/ ~/.config
+# Configure and copy i3
+python3 i3_configure.py
+mkdir -p ~/.config/i3
+cp i3/{config,i3status.conf} ~/.config/i3
 
 
 # Configure rofi
