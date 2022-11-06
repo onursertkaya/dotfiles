@@ -38,7 +38,7 @@ alias shrug="echo ¯\\\_\(ツ\)_/¯";
 
 # Functions
 function show_i3_launch_commands() {
-  notify-send "commands (b)rowsers, (m)usic"
+  notify-send 'commands' '(b)rowsers, (m)usic'
 }
 
 function alacritty_set_font() {

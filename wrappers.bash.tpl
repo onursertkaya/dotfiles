@@ -37,14 +37,14 @@ rofi_window() {
 homescreen () {
     xrandr
     sleep 1
-    xrandr --output ${EXTERNAL_SCREEN} --auto --primary
+    xrandr --output ${EXTERNAL_SCREEN} --auto --primary --dpi 144
     xrandr --output ${LAPTOP_SCREEN}   --off
 }
 
 noscreen() {
     xrandr
     sleep 1
-    xrandr --output ${LAPTOP_SCREEN}   --auto --primary
+    xrandr --output ${LAPTOP_SCREEN}   --auto --primary --dpi 144
     xrandr --output ${EXTERNAL_SCREEN} --off
 }
 
