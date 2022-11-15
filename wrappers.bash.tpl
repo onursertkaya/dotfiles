@@ -48,6 +48,24 @@ noscreen() {
     xrandr --output ${EXTERNAL_SCREEN} --off
 }
 
+brightness_up() {
+    curr_brightness=$(xrandr --verbose | grep -oP '(?<=Brightness:\s).*')
+    increased=$(python3 -c \
+        'import sys; print(min(1.0, float(sys.argv[1])+0.1))' \
+        $curr_brightness)
+
+    xrandr --output ${LAPTOP_SCREEN} --brightness $increased
+}
+
+brightness_down() {
+    curr_brightness=$(xrandr --verbose | grep -oP '(?<=Brightness:\s).*')
+    decreased=$(python3 -c \
+        'import sys; print(max(0.1, float(sys.argv[1])-0.1))' \
+        $curr_brightness)
+
+    xrandr --output ${LAPTOP_SCREEN} --brightness $decreased
+}
+
 kbd_init() {
     setxkbmap -option
     setxkbmap -layout us
@@ -76,7 +94,6 @@ kbd_toggle() {
 }
 
 function browsers() {
-  # map to ctrl-shift-b
   google-chrome &
   firefox &
 }
