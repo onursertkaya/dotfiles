@@ -127,25 +127,33 @@ bindsym F10 exec "UU=$(cat ~/.pass   | base64 -d); sleep 0.5; xdotool type $UU"
 bindsym F9  exec "UU=$(cat ~/.pass_a); sleep 0.5; xdotool type $UU"
 
 # i3-control
-bindsym $mod+Ctrl+c reload
-bindsym $mod+Ctrl+r restart
-bindsym $mod+Ctrl+e exec "i3-nagbar -t warning -m 'Logout?' -B 'Yep.' 'i3-msg exit'"
+mode "control" {
+    bindsym e mode "default"; exec "i3-nagbar -t warning -m 'Logout?' -B 'Yep.' 'i3-msg exit'"
+    bindsym s mode "default"; exec "wrappers.bash system_sleep";
+    bindsym q mode "default"; exec "wrappers.bash system_shutdown";
+    bindsym c mode "default"; reload
+    bindsym r mode "default"; restart
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+Ctrl+Escape mode "control"
 
 
 # modes
 mode "resize" {
-        bindsym h resize shrink width  80 px; move right 40 px;
-        bindsym j resize grow   height 80 px; move up    40 px;
-        bindsym k resize shrink height 80 px; move down  40 px;
-        bindsym l resize grow   width  80 px; move left  40 px;
+    bindsym h resize shrink width  80 px; move right 40 px;
+    bindsym j resize grow   height 80 px; move up    40 px;
+    bindsym k resize shrink height 80 px; move down  40 px;
+    bindsym l resize grow   width  80 px; move left  40 px;
 
-        bindsym Left  resize shrink width  80 px; move right 40 px;
-        bindsym Down  resize grow   height 80 px; move up    40 px;
-        bindsym Up    resize shrink height 80 px; move down  40 px;
-        bindsym Right resize grow   width  80 px; move left  40 px;
+    bindsym Left  resize shrink width  80 px; move right 40 px;
+    bindsym Down  resize grow   height 80 px; move up    40 px;
+    bindsym Up    resize shrink height 80 px; move down  40 px;
+    bindsym Right resize grow   width  80 px; move left  40 px;
 
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
 }
 
 mode "move" {

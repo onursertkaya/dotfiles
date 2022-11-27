@@ -93,6 +93,23 @@ kbd_toggle() {
     esac
 }
 
+system_sleep() {
+    # systemctl hibernate writes the state to disk
+    # + less power consumption
+    # - heavier on the disk
+    # - asks for disk password if there's one
+
+    # systemctl suspend writes the state to ram
+    # + faster to wake up
+    # - no effect on disk
+    # - more power consumption
+    systemctl suspend
+}
+
+system_shutdown() {
+    systemctl poweroff
+}
+
 function browsers() {
   google-chrome &
   firefox &

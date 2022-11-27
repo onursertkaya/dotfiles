@@ -5,6 +5,10 @@ CONF_ROOT=
 # Enable CTRL+S for forward search
 stty -ixon
 
+
+# Enable longer HIST
+HISTSIZE=10000
+
 # Prompt
 PS1='[$(date +'%T')] ${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\w\[\033[00m\]\[\033[01;36m\]$(parse_git_branch)\[\033[00m\]\n\[\033[01;33m\]> \[\033[00m\] '
 
@@ -23,8 +27,12 @@ alias gits='git status'
 alias docker_img='docker images --format="table {{.Repository}}:{{.Tag}}"'
 alias docker_img_sorted='docker images --format="table {{.Size}}\t{{.Repository}}:{{.Tag}}" | sort -hr'
 
-alias f='fish'
-alias ff='find . -name'
+alias f='fzf'
+alias fao='vim $(fzf)'
+alias fac='fzf | copy'
+
+alias h='HISTTIMEFORMAT="" history | cut -c 8- | fzf'
+alias hr='eval $(h)'
 alias copy='xclip -selection clipboard'
 alias clar='clear'
 alias cler='clear'
