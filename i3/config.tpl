@@ -38,8 +38,8 @@ bindsym $mod+c   focus child
 bindsym $mod+Ctrl+a layout stacking
 bindsym $mod+Ctrl+s layout tabbed
 bindsym $mod+Ctrl+d layout toggle split
-bindsym $mod+Ctrl+h split h
-bindsym $mod+Ctrl+v split v
+bindsym $mod+Ctrl+z split h
+bindsym $mod+Ctrl+x split v
 
 
 # window state
@@ -63,11 +63,15 @@ bindsym $mod+Shift+Left  move left
 bindsym $mod+Shift+Down  move down
 bindsym $mod+Shift+Up    move up
 bindsym $mod+Shift+Right move right
+bindsym $mod+Ctrl+Shift+j move workspace prev
+bindsym $mod+Ctrl+Shift+k move workspace next
 bindsym $mod+Ctrl+Shift+Left  move workspace prev
 bindsym $mod+Ctrl+Shift+Right move workspace next
 
 
 # workspaces
+bindsym $mod+Ctrl+j workspace prev
+bindsym $mod+Ctrl+k workspace next
 bindsym $mod+Ctrl+Left  workspace prev
 bindsym $mod+Ctrl+Right workspace next
 
@@ -115,9 +119,6 @@ bindsym $mod+f      exec "wrappers.bash rofi_window"
 bindsym $mod+Ctrl+1 exec "wrappers.bash noscreen"
 bindsym $mod+Ctrl+2 exec "wrappers.bash homescreen"
 
-bindsym $mod+Mod1+l exec "i3lock -c 000000 && sleep 1 && xset dpms force off"
-bindsym $mod+Ctrl+l exec "sleep 1 && xset dpms force off"
-bindsym $mod+Ctrl+k exec "wrappers.bash kbd_toggle"
 
 bindsym $mod+Ctrl+m exec --no-startup-id "wrappers.bash music"
 bindsym $mod+Ctrl+b exec --no-startup-id "wrappers.bash browsers"
@@ -128,11 +129,16 @@ bindsym F9  exec "UU=$(cat ~/.pass_a); sleep 0.5; xdotool type $UU"
 
 # i3-control
 mode "control" {
+    bindsym h mode "default"; exec "wrappers.bash notify_control_mode_keybindings"
     bindsym e mode "default"; exec "i3-nagbar -t warning -m 'Logout?' -B 'Yep.' 'i3-msg exit'"
     bindsym s mode "default"; exec "wrappers.bash system_sleep";
     bindsym q mode "default"; exec "wrappers.bash system_shutdown";
     bindsym c mode "default"; reload
     bindsym r mode "default"; restart
+
+    bindsym l mode "default"; exec "wrappers.bash screen_turn_off"
+    bindsym j mode "default"; exec "wrappers.bash lock"
+    bindsym k exec "wrappers.bash kbd_toggle"
 
     bindsym Return mode "default"
     bindsym Escape mode "default"

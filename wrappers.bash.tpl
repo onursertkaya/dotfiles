@@ -66,6 +66,28 @@ brightness_down() {
     xrandr --output ${LAPTOP_SCREEN} --brightness $decreased
 }
 
+notify_control_mode_keybindings() {
+    h='h - help'
+    e='e - end i3 session'
+    s='s - sleep'
+    q='q - shutdown'
+    c='c - i3 config reload'
+    r='r - restart i3 session'
+    j='j - lock'
+    l='l - screen off'
+    k='k - toggle keyboard layout'
+
+    notify-send commands "$h\n$e\n$s\n$q\n$c\n$r\n$j\n$l\n$k"
+}
+
+screen_turn_off() {
+    sleep 1 && xset dpms force off
+}
+
+lock() {
+    i3lock -c 000000 && screen_turn_off
+}
+
 kbd_init() {
     setxkbmap -option
     setxkbmap -layout us
@@ -110,12 +132,12 @@ system_shutdown() {
     systemctl poweroff
 }
 
-function browsers() {
+browsers() {
   google-chrome &
   firefox &
 }
 
-function music() {
+music() {
   pacmd set-default-sink alsa_output.pci-0000_00_1f.3.analog-stereo
   pacmd set-default-source alsa_input.pci-0000_00_1f.3.analog-stereo
 

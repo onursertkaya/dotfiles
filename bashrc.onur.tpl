@@ -18,10 +18,11 @@ alias vim="nvim.appimage -u ${CONF_ROOT}/init.vim";
 # Convenient shortcuts
 alias pyh="PYTHONPATH=. python3"
 
-alias gita='git commit -a --amend;'
-alias gitt='git log --all --graph --pretty="format:%C(yellow)%h%Creset [%><(18,trunc)%Cblue%an%Creset] %s %C(auto)%d%Creset"';
-alias gitd='git diff HEAD^ --stat'
-alias gits='git status'
+alias ga='git commit -a --amend;'
+alias gt='git log --all --graph --pretty="format:%C(yellow)%h%Creset [%><(18,trunc)%Cblue%an%Creset] %s %C(auto)%d%Creset"';
+alias gd='git diff HEAD^ --stat'
+alias gs='git status'
+alias gc='git checkout $(git branch | fzf)'
 # alias gitt='git log --graph --oneline --all --decorate'
 
 alias docker_img='docker images --format="table {{.Repository}}:{{.Tag}}"'
