@@ -1,0 +1,130 @@
+=== Tutorial ===
+https://missing.csail.mit.edu/2020/editors/
+some other topics: recording, replace mode.
+
+
+:open filename<tab>
+:find filename<tab>         glob works as well. tab/shift-tab scrolls
+:ls                         list buffers
+:b filename                 no need to type full filename, if it's unique it'll jump
+:only                       make the current buffer full screen
+
+
+=== Default functionality ===
+priors
+  word: default delimiters, WORD: whitespace delimiter
+    applies for b,e,w <> B,E,W
+  modifiers:
+    i: inside
+      - ciw, yiw, diw
+      - ci{ will remove everything inside curly braces
+        and go into insert mode.
+    a: around, like inside but includes the surroundings
+
+
+
+normal mode
+x:  remove char under cursor
+r:  replace char under cursor
+d*: delete with * as a movement cmd (b,e,w,B,E,W,hjkl)
+~:  flip the case
+/:  forward search
+?:  forward search
+n: next
+N: prev
+*: forward search word under cursor
+#: backward search workd under cursor
+.:   repeat the previous >edit<
+
+   scrolling:
+     ctrl+y: scroll up one line
+     ctrl+e: scroll down one line
+     zz: center screen around cursor, qualifies as a scroll
+
+   cursor navigation screen
+       ctrl+u: up half page
+       ctrl+d: down half page
+       H:  top of the visible buffer
+       M:  top of the visible buffer
+       L:  bottom of the visible buffer
+       %:  matching parens
+       gg: top of the file
+       G:  bottom of the file
+       f*: find first occurrence of char *
+       F:  reverse find
+       t:  find, but one char before, mnemonic (to)
+       T:  t, reversed
+         ,:  apply the last f/t/F/T in the same direction
+         ;:  , except it's the opposite direction
+         ctrl+o: previous cursor location
+         ctrl+i: next cursor location
+
+
+     line:
+       ctrl+arrow keys:  word, prev/next
+       shift+arrow keys: WORD, prev/next
+       hjkl:             left,down,up,right
+       0 ^ $:            beginning, beginning first non-zero, end
+       current word:
+         b: start
+         e: end
+       previous word:
+         bb: start
+         ge: end
+       next word:
+         w: start
+         we: end
+
+
+going into insert mode
+i: before cursor
+I: beggining of line
+a: after cursor
+A: end of line
+o: next line
+O: previous line
+s: substitute character
+S: substitute line
+c*: change, with * as a movement cmd.
+C: change towards the end of line
+  c and C are similar to d, except insert mode.
+
+
+
+visual mode
+v: visual cursor
+V: visual line
+ctrl-v: visual block mode
+
+
+
+u:      undo
+ctrl-r: redo
+y:      yank
+  yy:   copy the line
+  yw:   copy the word
+p:      paste
+
+
+
+autocomplete
+ctrl+n does the symbol search.
+  once the menu pops up, use ctrl+n/p for browsing.
+  ctrl+x ctrl+n limits the search to current file.
+  ctrl+x ctrl+f looks for filenames.
+
+
+
+split and navigation
+ctrl+w triggers the split control
+  s: horizontal new split
+  v: vertical new split
+  hjkl: navigation
+  ><: increase/decrease width
+  +-: increase/decrease height
+
+
+
+tabs
+:tabnew
+

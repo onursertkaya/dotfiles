@@ -5,6 +5,8 @@ CONF_ROOT=
 # Enable CTRL+S for forward search
 stty -ixon
 
+# Enable fzf key bindings
+source /usr/share/doc/fzf/examples/key-bindings.bash
 
 # Enable longer HIST
 HISTSIZE=10000
@@ -13,7 +15,7 @@ HISTSIZE=10000
 PS1='[$(date +'%T')] ${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\w\[\033[00m\]\[\033[01;36m\]$(parse_git_branch)\[\033[00m\]\n\[\033[01;33m\]> \[\033[00m\] '
 
 # Replacement programs
-alias vim="nvim.appimage -u ${CONF_ROOT}/init.vim";
+alias vim="nvim.appimage -u ${CONF_ROOT}/nvim/init.vim";
 
 # Convenient shortcuts
 alias pyh="PYTHONPATH=. python3"
@@ -34,6 +36,7 @@ alias fac='fzf | copy'
 
 alias h='HISTTIMEFORMAT="" history | cut -c 8- | fzf'
 alias hr='eval $(h)'
+
 alias copy='xclip -selection clipboard'
 alias clar='clear'
 alias cler='clear'
