@@ -25,14 +25,9 @@ bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
 
-bindsym $mod+Left  focus left
-bindsym $mod+Down  focus down
-bindsym $mod+Up    focus up
-bindsym $mod+Right focus right
-
 bindsym $mod+Tab focus mode_toggle
-bindsym $mod+p   focus parent
-bindsym $mod+c   focus child
+bindsym $mod+q   focus parent
+bindsym $mod+a   focus child
 
 # layout
 bindsym $mod+Ctrl+a layout stacking
@@ -59,10 +54,6 @@ bindsym $mod+Shift+j move down
 bindsym $mod+Shift+k move up
 bindsym $mod+Shift+l move right
 
-bindsym $mod+Shift+Left  move left
-bindsym $mod+Shift+Down  move down
-bindsym $mod+Shift+Up    move up
-bindsym $mod+Shift+Right move right
 bindsym $mod+Ctrl+Shift+j move workspace prev
 bindsym $mod+Ctrl+Shift+k move workspace next
 bindsym $mod+Ctrl+Shift+Left  move workspace prev
@@ -72,8 +63,6 @@ bindsym $mod+Ctrl+Shift+Right move workspace next
 # workspaces
 bindsym $mod+Ctrl+j workspace prev
 bindsym $mod+Ctrl+k workspace next
-bindsym $mod+Ctrl+Left  workspace prev
-bindsym $mod+Ctrl+Right workspace next
 
 set $ws1 "1"
 set $ws2 "2"
@@ -123,9 +112,8 @@ bindsym $mod+Ctrl+2 exec "wrappers.bash homescreen"
 bindsym $mod+Ctrl+m exec --no-startup-id "wrappers.bash music"
 bindsym $mod+Ctrl+b exec --no-startup-id "wrappers.bash browsers"
 
-
-bindsym F10 exec "UU=$(cat ~/.pass   | base64 -d); sleep 0.5; xdotool type $UU"
-bindsym F9  exec "UU=$(cat ~/.pass_a); sleep 0.5; xdotool type $UU"
+bindsym F10 exec pass_s
+bindsym F9 exec pass_a
 
 # i3-control
 mode "control" {
@@ -185,15 +173,20 @@ bindsym $mod+m mode "move"
 
 
 # colors
-set $green_black #1a0138
-set $green_dark  #1f4f6c
-set $green_mid   #1d6785
-set $green_light #1d7dac
-set $sand_light  #1c75a9
-set $sand_dark   #11577b
+set $grey_dark      #1a0138
+
+set $c1_dark  #1d6785
+set $c1_med   #1d7dac
+set $c1_light #1a8077
+
+set $separator #1c75a9
+
+set $c2_dark  #11577b
+set $c2_med   #11bb7b
+set $c2_light #11ddaa
 
 set $grey_light  #999999
-set $grey_dark   #444444
+set $grey_med   #444444
 
 
 # bar
@@ -206,15 +199,15 @@ bar {
     position bottom
 
     colors {
-        background $green_black
+        background $grey_dark
 
         statusline $grey_light
-        separator  $sand_light
+        separator  $separator
 
-        # <colorclass>     <border>          <background>      <text>
-        focused_workspace  $green_light      $green_mid        $green_mid
-        active_workspace   $green_light      $green_mid        $green_mid
-        inactive_workspace $green_dark       $green_dark       $green_dark
+        # <colorclass>     <border>     <background>   <text>
+        focused_workspace  $c1_med      $c1_dark       $c1_dark
+        active_workspace   $c1_med      $c1_dark       $c1_dark
+        inactive_workspace $c1_dark     $c1_dark       $c1_dark
 
         urgent_workspace   #ffffff           #cc2458           #ffffff
         binding_mode       #ffffff           #cc2458           #ffffff
@@ -225,23 +218,23 @@ bar {
 # edges
 hide_edge_borders both
 default_border none
-for_window [floating] border pixel 1
+for_window [floating] border pixel 0
 
 
-# class                 border         backgr.        text             indicator child_border
-client.focused          $sand_light    $green_light   $sand_dark        #ffffff   #ffffff
-client.focused_inactive $sand_dark     $green_dark    $sand_light       #ffffff   #ffffff
-client.unfocused        $sand_dark     $green_dark    $sand_light       #ffffff   #ffffff
-client.urgent           #ffffff        #cc2458        $grey_light
-client.placeholder      #ffffff        #cc2458        $grey_light
+# class                 border      backgr.    text       indicator  child_border
+client.focused          $c1_dark    $grey_dark  $c1_light #ffffff    #ffffff
+client.focused_inactive $c1_med     $grey_med   $c1_med   #ffffff    #ffffff
+client.unfocused        $c1_med     $grey_med   $c1_med   #ffffff    #ffffff
+client.urgent           #ffffff     #cc2458     $grey_light
+client.placeholder      #aa0000     #cc2458     $grey_light
 
-client.background       $green_black
+client.background       #00ff00
 
 
 # KB shortcuts
 
 # startup
-exec --no-startup-id "wrappers.bash homescreen"
+# exec --no-startup-id "wrappers.bash homescreen"
 exec --no-startup-id "wrappers.bash kbd_init"
 exec --no-startup-id "wrappers.bash compton_cc"
 exec --no-startup-id "wrappers.bash dunst_cc"
@@ -260,7 +253,6 @@ for_window [class="Alacritty"] floating enable
 # ws1, ws2, ws5
 assign [class="Slack"] number $ws1
 assign [class="Google-chrome"] number $ws2
-assign [class="firefox"] number $ws2
 assign [class="Microsoft Teams - Preview"] number $ws5
 
 # ws4 is for music

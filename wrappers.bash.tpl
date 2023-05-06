@@ -44,6 +44,8 @@ homescreen () {
 noscreen() {
     xrandr
     sleep 1
+
+    # laptop_screen=$(xrandr | grep -oP '\w.*(?=connected.*\d{4}x\d{4})')
     xrandr --output ${LAPTOP_SCREEN}   --auto --primary --dpi 144
     xrandr --output ${EXTERNAL_SCREEN} --off
 }
@@ -89,6 +91,7 @@ lock() {
 }
 
 kbd_init() {
+    xset r rate 170 40  # time-out & repeat speed
     setxkbmap -option
     setxkbmap -layout us
 }

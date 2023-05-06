@@ -13,7 +13,10 @@ if __name__ == '__main__':
         ["xrandr"], capture_output=True,
     ).stdout.decode("utf-8").strip()
 
-    matches = re.findall(r"(?<=connected primary )\d+x\d+", out)
+    matches = (
+        re.findall(r"(?<=connected )\d+x\d+", out)
+        or re.findall(r"(?<=connected primary )\d+x\d+", out)
+    )
     if matches:
         width, height = [int(v) for v in matches[0].split("x")]
         offset_x = width// OFFSET_PERCENT
