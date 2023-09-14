@@ -1,4 +1,8 @@
-# https://github.com/neovim/neovim/releases/latest
+wget \
+  https://github.com/neovim/neovim/releases/download/stable/nvim.appimage \
+  ~/.local/bin/nvim.appimage \
+  && chmod +x ~/.local/bin/nvim.appimage
+
 # https://github.com/dandavison/delta/releases
 
 # sudo apt install nvidia-driver-*

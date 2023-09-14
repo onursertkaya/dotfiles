@@ -24,8 +24,6 @@ dunst_cc() {
     dunst -conf "${CONF_ROOT}/dunstrc"
 }
 
-# Custom commands ======================================================
-
 rofi_show() {
     rofi -config "${CONF_ROOT}/rofi/config" -show run
 }
@@ -34,6 +32,7 @@ rofi_window() {
     rofi -config "${CONF_ROOT}/rofi/config" -show window
 }
 
+# Custom commands ======================================================
 homescreen () {
     xrandr
     sleep 1
@@ -149,6 +148,14 @@ music() {
 
   spotify &
   pulseeffects &
+}
+
+pass_s() {
+  bash ~/.pass
+}
+
+pass_a() {
+  bash ~/.pass_a
 }
 
 eval ${1}

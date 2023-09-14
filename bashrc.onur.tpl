@@ -20,15 +20,65 @@ alias vim="nvim.appimage -u ${CONF_ROOT}/nvim/init.vim";
 # Convenient shortcuts
 alias pyh="PYTHONPATH=. python3"
 
-alias ga='git commit -a --amend;'
+alias c='clear'
+alias t='date +'"'"'%T'"'"
+alias ga='git commit -a --amend'
 alias gt='git log --all --graph --pretty="format:%C(yellow)%h%Creset [%><(18,trunc)%Cblue%an%Creset] %s %C(auto)%d%Creset"';
 alias gd='git diff HEAD^ --stat'
 alias gs='git status'
 alias gc='git checkout $(git branch | fzf)'
+alias gp='git pull origin master'
+alias gr='git rebase -i master'
 # alias gitt='git log --graph --oneline --all --decorate'
 
 alias docker_img='docker images --format="table {{.Repository}}:{{.Tag}}"'
 alias docker_img_sorted='docker images --format="table {{.Size}}\t{{.Repository}}:{{.Tag}}" | sort -hr'
+function docker_here {
+    img_name=$1;
+    shift;
+    rest=$@;
+    img=$(docker images --format="table {{.Repository}}:{{.Tag}}" | grep $img_name | head -n1);
+    docker run -it --rm \
+        -w ${PWD} \
+        -v ${PWD}:${PWD} \
+        -v ${HOME}:${HOME} \
+        -u $(id -u):$(id -g) \
+        $rest \
+            $img /bin/bash;
+}
+function docker_img_clean {
+    picked_img_size_name=$(docker_img_sorted | fzf);
+    if [ $? == 0 ]; then
+        picked_img_name=$(echo $picked_img_size_name | awk '{print $2}');
+        docker rmi $picked_img_name;
+        docker_img_clean;
+    fi
+    return
+}
+
+function cps() {
+    out=$(python3 -c "
+import time
+CHUNK_SIZE = $3
+CHUNK_TIMES = []
+with open('$1', 'rb') as src, open('$2', 'wb') as dst:
+  while True:
+    start = time.time()
+    chunk = src.read(CHUNK_SIZE)
+    if chunk:
+      dst.write(chunk)
+      end = time.time()
+      dur = end - start
+      CHUNK_TIMES.append(dur)
+      print(f'{CHUNK_SIZE/dur} kB/s', end='\r\n')
+      time.sleep(1)
+    else:
+      print()
+      break
+  print(f'avg: {sum(CHUNK_TIMES)/len(CHUNK_TIMES)} kB/s')
+")
+    echo $out
+}
 
 alias f='fzf'
 alias fao='vim $(fzf)'

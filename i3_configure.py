@@ -19,7 +19,7 @@ if __name__ == '__main__':
     )
     if matches:
         width, height = [int(v) for v in matches[0].split("x")]
-        offset_x = width// OFFSET_PERCENT
+        offset_x = width // OFFSET_PERCENT
         offset_y = height // OFFSET_PERCENT
 
         half_width = width // 2
@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
         with open("i3/config.tpl", "r") as conf:
             lines = conf.read().split("\n")
-        move_mode_line = lines.index("mode \"move\" {")
+        move_mode_line = lines.index("mode $move_mode {")
         lines = lines[:move_mode_line+1] + insert + lines[move_mode_line+1:]
 
         with open("i3/config", "w") as conf:
@@ -56,4 +56,4 @@ if __name__ == '__main__':
 
     else:
         raise RuntimeError("Problem parsing xrandr output.")
-    
+
