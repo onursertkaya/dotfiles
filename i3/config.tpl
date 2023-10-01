@@ -29,13 +29,6 @@ bindsym $mod+Tab focus mode_toggle
 bindsym $mod+q   focus parent
 bindsym $mod+a   focus child
 
-# layout
-bindsym $mod+Ctrl+a layout stacking
-bindsym $mod+Ctrl+s layout tabbed
-bindsym $mod+Ctrl+d layout toggle split
-bindsym $mod+Ctrl+z split h
-bindsym $mod+Ctrl+x split v
-
 
 # window state
 bindsym $mod+Ctrl+q kill
@@ -43,11 +36,10 @@ bindsym $mod+Ctrl+f floating toggle
 
 
 # scratchpad
-bindsym $mod+space scratchpad show
+#bindsym $mod+space scratchpad show
+#bindsym $mod+Shift+space move to scratchpad
 
-
-# moving windows
-bindsym $mod+Shift+f move to scratchpad
+bindsym $mod+space workspace back_and_forth
 
 bindsym $mod+Shift+h move left
 bindsym $mod+Shift+j move down
@@ -101,7 +93,7 @@ bindsym $mod+Shift+0 move container to workspace number $ws10
 
 
 # control
-bindsym $mod+Return exec "wrappers.bash alacritty_cc"
+bindsym $mod+Return exec "wrappers.bash alacritty_cc", workspace number $ws10
 bindsym $mod+d      exec "wrappers.bash rofi_show"
 bindsym $mod+f      exec "wrappers.bash rofi_window"
 
@@ -112,11 +104,13 @@ bindsym $mod+Ctrl+2 exec "wrappers.bash homescreen"
 bindsym $mod+Ctrl+m exec --no-startup-id "wrappers.bash music"
 bindsym $mod+Ctrl+b exec --no-startup-id "wrappers.bash browsers"
 
-bindsym F10 exec pass_s
-bindsym F9 exec pass_a
+bindsym F10 exec "wrappers.bash pass_s"
+bindsym F9 exec "wrappers.bash pass_a"
 
-# i3-control
-mode "control" {
+
+# modes
+set $control_mode "control [ h ]"
+mode $control_mode {
     bindsym h mode "default"; exec "wrappers.bash notify_control_mode_keybindings"
     bindsym e mode "default"; exec "i3-nagbar -t warning -m 'Logout?' -B 'Yep.' 'i3-msg exit'"
     bindsym s mode "default"; exec "wrappers.bash system_sleep";
@@ -131,45 +125,47 @@ mode "control" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
-bindsym $mod+Ctrl+Escape mode "control"
 
-
-# modes
-mode "resize" {
-    bindsym h resize shrink width  80 px; move right 40 px;
-    bindsym j resize grow   height 80 px; move up    40 px;
-    bindsym k resize shrink height 80 px; move down  40 px;
-    bindsym l resize grow   width  80 px; move left  40 px;
-
-    bindsym Left  resize shrink width  80 px; move right 40 px;
-    bindsym Down  resize grow   height 80 px; move up    40 px;
-    bindsym Up    resize shrink height 80 px; move down  40 px;
-    bindsym Right resize grow   width  80 px; move left  40 px;
+set $layout_mode "layout [ s | t | space | h | v ]"
+mode $layout_mode {
+    bindsym s layout stacking
+    bindsym t layout tabbed
+    bindsym space layout toggle split
+    bindsym h split h
+    bindsym v split v
 
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
 
-mode "move" {
-    bindsym h move left  40 px; 
-    bindsym j move down  40 px; 
-    bindsym k move up    40 px; 
-    bindsym l move right 40 px; 
+set $resize_mode "resize [ h | j | k | l ]"
+mode $resize_mode {
+    bindsym h resize shrink width  160 px; move right 80 px;
+    bindsym j resize shrink height 160 px; move down  80 px;
+    bindsym k resize grow   height 160 px; move up    80 px;
+    bindsym l resize grow   width  160 px; move left  80 px;
 
-    bindsym Left  move left  40 px; 
-    bindsym Down  move down  40 px; 
-    bindsym Up    move up    40 px; 
-    bindsym Right move right 40 px; 
-    
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+set $move_mode "move [ h | j | k | l | c ]"
+mode $move_mode {
+    bindsym h move left  80 px; 
+    bindsym j move down  80 px; 
+    bindsym k move up    80 px; 
+    bindsym l move right 80 px; 
+
     bindsym c move position center
 
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
 
-
-bindsym $mod+r mode "resize"
-bindsym $mod+m mode "move"
+bindsym $mod+Ctrl+Escape mode $control_mode
+bindsym $mod+c mode $layout_mode
+bindsym $mod+r mode $resize_mode
+bindsym $mod+m mode $move_mode
 
 
 # colors
@@ -218,13 +214,14 @@ bar {
 # edges
 hide_edge_borders both
 default_border none
-for_window [floating] border pixel 0
+#default_floating_border pixel 1
+#for_window [floating] border pixel 1
 
 
 # class                 border      backgr.    text       indicator  child_border
-client.focused          $c1_dark    $grey_dark  $c1_light #ffffff    #ffffff
-client.focused_inactive $c1_med     $grey_med   $c1_med   #ffffff    #ffffff
-client.unfocused        $c1_med     $grey_med   $c1_med   #ffffff    #ffffff
+client.focused          $c1_dark    $grey_dark  $c1_light #ffffff    #cccccc
+client.focused_inactive $c1_med     $grey_med   $c1_med   #ffffff    #777777
+client.unfocused        $c1_med     $grey_med   $c1_med   #ffffff    #333333
 client.urgent           #ffffff     #cc2458     $grey_light
 client.placeholder      #aa0000     #cc2458     $grey_light
 
@@ -245,10 +242,12 @@ exec --no-startup-id "blueman-applet"
 
 
 # floating windows
-for_window [class="Gedit"] floating enable
-for_window [class="firefox"] floating enable
-for_window [class="Gnome-terminal"] floating enable
-for_window [class="Alacritty"] floating enable
+#for_window [class="Gedit"] floating enable
+#for_window [class="firefox"] floating enable
+#for_window [class="Gnome-terminal"] floating enable
+#for_window [class="Alacritty"] floating enable
+
+assign [class="Alacritty"] number $ws10
 
 # ws1, ws2, ws5
 assign [class="Slack"] number $ws1
