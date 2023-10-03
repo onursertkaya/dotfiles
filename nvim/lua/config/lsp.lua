@@ -24,9 +24,9 @@ lspconfig.pylsp.setup {
                 yapf = {
                     enabled = false
                 },
-                pylint = {
-                    enabled = true
-                }
+                --pylint = {
+                --    enabled = true
+                --}
                 --flake8 = {
                 --    enabled = true
                 --},
@@ -36,6 +36,15 @@ lspconfig.pylsp.setup {
             }
         }
     }
+}
+
+lspconfig.ruff_lsp.setup {
+  on_attach = on_attach,
+  init_options = {
+    settings = {
+      args = {},
+    }
+  }
 }
 
 vim.diagnostic.config({ virtual_text = false })
