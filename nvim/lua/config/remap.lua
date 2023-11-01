@@ -11,7 +11,7 @@ vim.keymap.set("t", "<A-enter>", "<C-\\><C-n><CMD>lua require('FTerm').toggle()<
 -- fundamentals, leader
 vim.keymap.set("n", "<leader>c", ":noh<enter>")
 vim.keymap.set("n", "<leader>q", ":qa<enter>")
-vim.keymap.set("n", "<leader>s", ":%s/<C-R><C-W>//g<Left><Left>")
+vim.keymap.set("n", "<leader>r", ":%s/<C-R><C-W>//g<Left><Left>")
 
 local tls_blt = require("telescope.builtin")
 vim.keymap.set("n", "<leader>G", tls_blt.live_grep, {})
@@ -79,43 +79,37 @@ vim.keymap.set("n", "<C-A-h>", ":tabprevious<enter>")
 
 local M = {}
 
-function M.set_lsp_keymaps()
-    local comppylete = require("comppylete")
-    local cpp_py_omnifunc_triggers = {".", "->", "::"}
-
-    -- omnifunc triggering
-    for _, t in ipairs(cpp_py_omnifunc_triggers) do
-        vim.keymap.set("i", t, comppylete.make_callback_for_omnifunc_invocation(t, false), opts)
+function M.set_lsp_keymaps(opts)
+    local filetype = vim.bo.filetype
+    if not (filetype == "cpp" or filetype == "python") then
+        return
     end
-    vim.keymap.set("i", "<C-space>", comppylete.make_callback_for_omnifunc_invocation("", false), opts)
-    vim.keymap.set("i", "<BS>", comppylete.make_callback_for_omnifunc_invocation("<BS>", true), opts)
 
-    -- signature help triggering
-    vim.keymap.set("i", "(",  comppylete.make_callback_for_signature_help("("), opts)
-    vim.keymap.set("i", ",",  comppylete.make_callback_for_signature_help(","), opts)
-    vim.keymap.set("i", "<C-s>", vim.lsp.buf.signature_help, opts)
-    vim.keymap.set("i", "<C-A-s>", comppylete.insert_signature_help, opts)
+    local comppylete = require("comppylete")
+    comppylete.setup(opts)
 
-    -- normal mode
-    --   jumps
+    -- symbol jumps
     vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
     vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-    vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, opts)
     vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+    vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, opts)
     vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
 
+    -- diagnostics' jumps
     vim.keymap.set("n", "ge", vim.diagnostic.open_float)
     vim.keymap.set("n", "gn", vim.diagnostic.goto_next)
     vim.keymap.set("n", "gp", vim.diagnostic.goto_prev)
 
-    --   actions
+    -- actions
+    vim.keymap.set("n", "<leader>s", vim.lsp.buf.signature_help, opts)
     vim.keymap.set("n", "<leader>i", vim.lsp.buf.hover, opts)
-    vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, opts)
     vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, opts)
-    vim.keymap.set("n", "<leader>t", function()
-        vim.lsp.buf.format { async = true }
-    end, opts)
 
+    local format_func = function() vim.lsp.buf.format { async = true } end
+    vim.keymap.set("n", "<leader>t", format_func, opts)
+
+    -- disabled, opt for <leader>s instead
+    -- vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, opts)
 end
 
 return M

@@ -10,6 +10,11 @@ o.shiftwidth = 4
 o.tabstop = 4
 o.softtabstop = 4
 
+vim.g.python_indent = {
+    open_paren = 4,
+    closed_paren_align_last_line = false
+}
+
 o.hlsearch = true
 o.incsearch = true
 
@@ -34,8 +39,7 @@ o.wildmenu = true
 
 -- do not insert completion suggestions in
 -- insert mode eagerly, wait for input. 
-o.completeopt = "menu,noinsert"
-
+o.completeopt = "menu,preview,noinsert"
 
 -- default theme & settings
 vim.cmd("filetype indent plugin on")

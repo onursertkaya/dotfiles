@@ -1,8 +1,6 @@
 local lspconfig = require("lspconfig")
 local remap = require("remap")
 
--- TODO: filetype based autocomplete behavior
-
 ---- for enhanced debugging
 -- vim.lsp.set_log_level 'debug'
 -- if vim.fn.has 'nvim-0.5.1' == 1 then
@@ -54,8 +52,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     group = vim.api.nvim_create_augroup("UserLspConfig", {}),
     callback = function(ev)
         vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
-        local opts = { buffer = ev.buf }
-
-        remap.set_lsp_keymaps()
+        local buffer_opts = { buffer = ev.buf }
+        remap.set_lsp_keymaps(buffer_opts)
     end,
 })
