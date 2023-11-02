@@ -81,7 +81,7 @@ local M = {}
 
 function M.set_lsp_keymaps(opts)
     local filetype = vim.bo.filetype
-    if not (filetype == "cpp" or filetype == "python") then
+    if not (filetype == "cpp" or filetype == "python" or filetype == "lua") then
         return
     end
 
