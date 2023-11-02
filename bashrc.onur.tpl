@@ -29,6 +29,7 @@ alias gs='git status'
 alias gc='git checkout $(git branch | fzf)'
 alias gp='git pull origin master'
 alias gr='git rebase -i master'
+alias gl='git log'
 # alias gitt='git log --graph --oneline --all --decorate'
 
 alias docker_img='docker images --format="table {{.Repository}}:{{.Tag}}"'

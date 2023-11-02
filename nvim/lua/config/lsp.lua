@@ -12,6 +12,7 @@ vim.diagnostic.config({ virtual_text = false })
 
 lspconfig.clangd.setup {
     cmd = { "clangd" },
+    root_dir = lspconfig.util.root_pattern(".git")
 }
 
 lspconfig.pylsp.setup {
@@ -61,6 +62,7 @@ lspconfig.lua_ls.setup {
 }
 
 vim.api.nvim_create_autocmd("LspAttach", {
+    pattern = { "*.cpp", "*.h", "*.py", "*.lua" },
     group = vim.api.nvim_create_augroup("UserLspConfig", {}),
     callback = function(ev)
         vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"

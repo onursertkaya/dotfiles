@@ -14,33 +14,26 @@ vim.keymap.set("n", "<leader>q", ":qa<enter>")
 vim.keymap.set("n", "<leader>r", ":%s/<C-R><C-W>//g<Left><Left>")
 
 local tls_blt = require("telescope.builtin")
+
 vim.keymap.set("n", "<leader>G", tls_blt.live_grep, {})
 vim.keymap.set("n", "<leader>g", tls_blt.grep_string, {})
 vim.keymap.set("n", "<leader>f", tls_blt.find_files, {})
 vim.keymap.set("n", "<leader>b", tls_blt.buffers, {})
-
 vim.keymap.set("n", "<leader>d", ":NvimTreeToggle<enter>")
 vim.keymap.set("n", "<leader>l", ":NvimTreeFindFile<enter>")
 
 
 -- distinguish delete and cut, use register 0 solely.
---   [VISUAL] delete, cut and paste
 vim.keymap.set("v", "d", '"_d')
-vim.keymap.set("v", "x", '"0d')
-vim.keymap.set("v", "p", '<Esc>:set paste<enter>i<C-r>0<Esc>:set nopaste<enter>')
 
---   [NORMAL] paste and replace the current word with register 0 content
-vim.keymap.set("n", "p", '"0p')
-vim.keymap.set("n", "P", '"0P')
-vim.keymap.set("n", "<leader>p", '"_diw"0P')
-
+-- use _ciw instead of _diwP as the latter behaves differently if replacee word is the last in line.
+vim.keymap.set("n", "<leader>p", '"_ciw<C-R>0<Esc>')
 
 -- [VISUAL] move blocks
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 vim.keymap.set("v", "H", "<gv")
 vim.keymap.set("v", "L", ">gv")
-
 
 -- [INSERT] mode hjkl
 vim.keymap.set("i", "<C-h>", "<Left>")
@@ -90,6 +83,10 @@ function M.set_lsp_keymaps(opts)
 
     -- symbol jumps
     vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+    vim.keymap.set("n", "gdv", function(o)
+        vim.cmd("vs")
+        vim.lsp.buf.definition(o)
+    end, opts)
     vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
     vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
     vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, opts)

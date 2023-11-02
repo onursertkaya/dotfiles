@@ -39,7 +39,7 @@ o.wildmenu = true
 
 -- do not insert completion suggestions in
 -- insert mode eagerly, wait for input.
-o.completeopt = "menu,preview,noinsert"
+o.completeopt = "menu,noinsert"
 
 -- default theme & settings
 vim.cmd("filetype indent plugin on")
