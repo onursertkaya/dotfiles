@@ -2,7 +2,7 @@ local util = require("util")
 
 local function make_callback_for_omnifunc_invocation(key, once)
     return function()
-        feed_omni = "<C-x><C-o>"
+        local feed_omni = "<C-x><C-o>"
         if (once and (vim.fn.pumvisible() == 0)) then
             -- TODO: use tree sitter to check instead of relying on PUM visibility.
             feed_omni = ""
@@ -29,7 +29,7 @@ local function insert_signature_help()
     end
 
     local params = require("vim.lsp.util").make_position_params()
-    response, err = vim.lsp.buf_request_sync(0, "textDocument/signatureHelp", params)
+    local response, err = vim.lsp.buf_request_sync(0, "textDocument/signatureHelp", params)
 
     if err ~= nil then
         return
@@ -39,8 +39,8 @@ local function insert_signature_help()
     local signature = result.signatures[1].label
     local startIdx, endIdx = string.find(signature, "%b()")
     local in_parentheses = string.sub(signature, startIdx, endIdx)
-    msg = ""
-    ctr = 0
+    local msg = ""
+    local ctr = 0
     for lhs in string.gmatch(in_parentheses, "(%w+):%s%w+") do
         msg = msg .. (lhs .. "=, ")
         ctr = ctr + 1
@@ -57,9 +57,9 @@ local M = {}
 
 function M.setup(opts)
     -- define language triggers
-    local language_omnifunc_triggers = {"."}
+    local language_omnifunc_triggers = { "." }
     if vim.bo.filetype == "cpp" then
-        for _, t in {"::", "->"} do
+        for _, t in { "::", "->" } do
             table.insert(language_omnifunc_triggers, t)
         end
     end
@@ -70,29 +70,28 @@ function M.setup(opts)
     end
 
     -- define generic triggers
-    local generic_omnifunc_triggers = { 
+    local generic_omnifunc_triggers = {
         ["<C-space>"] = { "", false },
         ["<BS>"] = { "<BS>", true }
     }
 
     -- set generic triggers
     for t, feed in pairs(generic_omnifunc_triggers) do
-        feed_key, once = unpack(feed)
+        local feed_key, once = unpack(feed)
         vim.keymap.set("i", t, make_callback_for_omnifunc_invocation(feed_key, once), opts)
     end
 
 
     -- define signature help triggers
-    local signature_help_triggers = { 
-        ["<CR>"] = { "<CR>", true },
-        ["("] = { "(", false },
-        [","] = { ",", false }
+    local signature_help_triggers = {
+        ["<CR>"] = { true },
+        ["("] = { false },
+        [","] = { false }
     }
 
     -- set signature help triggers
-    for t, feed in pairs(signature_help_triggers) do
-        feed_key, while_pumvisible = unpack(feed)
-        vim.keymap.set("i", t,  make_callback_for_signature_help(t, while_pumvisible), opts)
+    for t, while_pumvisible in pairs(signature_help_triggers) do
+        vim.keymap.set("i", t, make_callback_for_signature_help(t, while_pumvisible), opts)
     end
 
     -- insert signature help kwargs, only applies for python

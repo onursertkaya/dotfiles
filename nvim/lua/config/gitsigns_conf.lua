@@ -8,4 +8,3 @@ require('gitsigns').setup {
         untracked    = { text = '┆' },
     },
 }
-

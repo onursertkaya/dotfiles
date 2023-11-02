@@ -38,7 +38,7 @@ o.wildmode = "full,longest"
 o.wildmenu = true
 
 -- do not insert completion suggestions in
--- insert mode eagerly, wait for input. 
+-- insert mode eagerly, wait for input.
 o.completeopt = "menu,preview,noinsert"
 
 -- default theme & settings
@@ -48,18 +48,9 @@ vim.cmd("colorscheme gruvbox")
 o.background = "dark"
 
 -- filetype aware themes
-vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
-  pattern = {"*.py"},
-  callback = function()
-    --vim.g.everforest_background = "hard"
-    --vim.cmd([[colorscheme everforest]])
-    
-    --vim.cmd("colorscheme dawn")
-
-    vim.cmd("colorscheme codedark")
-
-    --vim.g.neon_bold = true
-    --vim.g.neon_style = "dark"
-    --vim.cmd("colorscheme neon")
-  end,
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+    pattern = { "*.py" },
+    callback = function()
+        vim.cmd("colorscheme codedark")
+    end,
 })

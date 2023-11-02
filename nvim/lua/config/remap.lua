@@ -49,7 +49,7 @@ vim.keymap.set("i", "<C-k>", "<Up>")
 vim.keymap.set("i", "<C-l>", "<Right>")
 
 
--- [NORMAL] 
+-- [NORMAL]
 --   current buffer navigation, CTRL
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
@@ -113,4 +113,3 @@ function M.set_lsp_keymaps(opts)
 end
 
 return M
-
