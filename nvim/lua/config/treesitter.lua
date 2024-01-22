@@ -1,5 +1,5 @@
-require 'nvim-treesitter.configs'.setup {
-    ensure_installed = { "c", "cpp", "lua", "json", "vim", "vimdoc", "query", "sql", "python" },
+require("nvim-treesitter.configs").setup {
+    ensure_installed = { "c", "cpp", "cuda", "lua", "json", "vim", "vimdoc", "query", "sql", "python" },
     sync_install = false,
     auto_install = true,
 

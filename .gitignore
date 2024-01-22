@@ -3,3 +3,4 @@ rofi/config
 i3/config
 wrappers.bash
 bashrc.onur
+.mypy_cache

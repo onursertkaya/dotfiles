@@ -1,7 +1,6 @@
 set $mod Mod4
 
-font pango:UbuntuMono bold 6
-#font pango:DejaVu Sans Mono 8
+font pango:Uroob bold 12
 
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 exec --no-startup-id nm-applet
@@ -105,8 +104,7 @@ bindsym $mod+Ctrl+m exec --no-startup-id "wrappers.bash music"
 bindsym $mod+Ctrl+b exec --no-startup-id "wrappers.bash browsers"
 
 bindsym F10 exec "wrappers.bash pass_s"
-bindsym F9 exec "wrappers.bash pass_a"
-
+bindsym F9 exec "wrappers.bash user_s"
 
 # modes
 set $control_mode "control [ h ]"
@@ -169,20 +167,16 @@ bindsym $mod+m mode $move_mode
 
 
 # colors
-set $grey_dark      #1a0138
+set $grey_dark   #1d272e
+set $grey_light  #999999
+set $grey_med    #444444
 
-set $c1_dark  #1d6785
-set $c1_med   #1d7dac
+set $c1_med   #b5bdba
 set $c1_light #1a8077
 
-set $separator #1c75a9
+set $separator #7da6bd
 
-set $c2_dark  #11577b
-set $c2_med   #11bb7b
-set $c2_light #11ddaa
-
-set $grey_light  #999999
-set $grey_med   #444444
+set $text_1 #4f806f
 
 
 # bar
@@ -190,7 +184,7 @@ bar {
     status_command i3status --config ~/.config/i3/i3status.conf
     #status_command i3blocks
     tray_output primary
-    font pango:UbuntuMono bold 6
+    font pango:Uroob regular 12
     separator_symbol "//"
     position bottom
 
@@ -201,9 +195,9 @@ bar {
         separator  $separator
 
         # <colorclass>     <border>     <background>   <text>
-        focused_workspace  $c1_med      $c1_dark       $c1_dark
-        active_workspace   $c1_med      $c1_dark       $c1_dark
-        inactive_workspace $c1_dark     $c1_dark       $c1_dark
+        focused_workspace  $c1_med      $text_1       $text_1
+        active_workspace   $c1_med      $text_1       $text_1
+        inactive_workspace $text_1      $text_1       $text_1
 
         urgent_workspace   #ffffff           #cc2458           #ffffff
         binding_mode       #ffffff           #cc2458           #ffffff
@@ -218,12 +212,12 @@ default_border none
 #for_window [floating] border pixel 1
 
 
-# class                 border      backgr.    text       indicator  child_border
-client.focused          $c1_dark    $grey_dark  $c1_light #ffffff    #cccccc
-client.focused_inactive $c1_med     $grey_med   $c1_med   #ffffff    #777777
-client.unfocused        $c1_med     $grey_med   $c1_med   #ffffff    #333333
-client.urgent           #ffffff     #cc2458     $grey_light
-client.placeholder      #aa0000     #cc2458     $grey_light
+# class                 border      backgr.     text       indicator  child_border
+client.focused          $text_1     $grey_dark  $text_1    #ffffff    #cccccc
+client.focused_inactive $c1_med     $grey_dark  $grey_med  #ffffff    #777777
+client.unfocused        $c1_med     $grey_dark  $grey_med  #ffffff    #333333
+client.urgent           #ffffff     #cc2458     $grey_med
+client.placeholder      #aa0000     #cc2458     $grey_med
 
 client.background       #00ff00
 

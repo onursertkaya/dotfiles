@@ -13,15 +13,18 @@ Plug 'williamboman/mason.nvim', { 'do': ':MasonUpdate' }
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'neovim/nvim-lspconfig'
 
-Plug 'ojroques/nvim-hardline'
+Plug 'nvim-lualine/lualine.nvim'
 Plug 'lewis6991/gitsigns.nvim'
 
+Plug 'rebelot/kanagawa.nvim'
+Plug 'Shadorain/shadotheme'
 Plug 'rose-pine/neovim'
 Plug 'morhetz/gruvbox'
 Plug 'tomasiser/vim-code-dark'
 Plug 'sainnhe/everforest'
 Plug 'crispybaccoon/dawn.vim'
 Plug 'rafamadriz/neon'
+Plug 'DanielEliasib/sweet-fusion'
 
 call plug#end()
 
@@ -36,8 +39,7 @@ require("remap")
 require("lsp")
 require("opts")
 require("treesitter")
-require("nvimtree")
-require("hardlinebar_conf")
+require("peripherals")
 require("gitsigns_conf")
 EOF
 

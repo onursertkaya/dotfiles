@@ -7,8 +7,15 @@ local function is_current_cursor_word_an_identifier()
     local root = ts_utils.get_node_at_cursor()
     local r, c = unpack(vim.api.nvim_win_get_cursor(0))
     local node_at_cursor = root:named_descendant_for_range(r - 1, c - 1, r - 1, c - 1)
+    --require("util").log("cursor: " .. tostring(r) .. tostring(c))
 
-    return node_at_cursor and node_at_cursor:type() == "identifier"
+    local node_type = node_at_cursor:type()
+    return node_at_cursor and (
+        node_type == "identifier" or
+        node_type == "type_identifier" or
+        node_type == "field_identifier" or
+        node_type == "import_from_statement" or
+        node_type == "import_statement")
 end
 
 local function make_callback_for_omnifunc_invocation(key, invoke_once)
@@ -16,6 +23,7 @@ local function make_callback_for_omnifunc_invocation(key, invoke_once)
         local pum_visible = (vim.fn.pumvisible() == 0)
         local identifier = is_current_cursor_word_an_identifier()
 
+        --require("util").log("identifier: " .. tostring(identifier))
         local feed_omni = "<C-x><C-o>"
         if ((not identifier) or (invoke_once and pum_visible)) then
             feed_omni = ""
@@ -77,13 +85,19 @@ end
 local M = {}
 
 function M.setup(opts)
+    local filetype = vim.bo.filetype
+
+    require("util").log("[comppylete] setting up for filetype" .. filetype .. "\n")
+
     -- define language triggers
     local language_omnifunc_triggers = { "." }
-    if vim.bo.filetype == "cpp" then
+    if filetype == "cpp" or filetype == "cuda" then
         for _, t in ipairs({ "::", "->" }) do
             table.insert(language_omnifunc_triggers, t)
         end
     end
+
+    require("util").log("[comppylete] language triggers: " .. table.concat(language_omnifunc_triggers))
 
     -- set language triggers
     for _, t in ipairs(language_omnifunc_triggers) do
@@ -115,9 +129,9 @@ function M.setup(opts)
         vim.keymap.set("i", t, make_callback_for_signature_help(t, while_pumvisible), opts)
     end
 
-    if vim.bo.filetype == "python" then
+    if filetype == "python" then
         vim.keymap.set("i", "<C-A-s>", insert_signature_help, opts)
-    elseif vim.bo.filetype == "cpp" then
+    elseif filetype == "cpp" or filetype == "cuda" then
         vim.keymap.set("n", "gh", make_callback_for_clangd_header_source_jump(), opts)
     end
 end

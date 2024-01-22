@@ -29,7 +29,7 @@
     # the top and down respectively.
     # The width can be negative.  In this case the actual width is the
     # screen width minus the width defined in within the geometry option.
-    geometry = "384x5-768+21"
+    geometry = "384x10+1728+50"
 
     # Show how many messages are currently hidden (because of geometry).
     indicate_hidden = yes
@@ -61,10 +61,10 @@
 
     # Defines width in pixels of frame around the notification window.
     # Set to 0 to disable.
-    frame_width = 0
+    frame_width = 1
 
     # Defines color of the frame around the notification window.
-    frame_color = "#aaaaaa"
+    frame_color = "#7da6bd"
 
     # Define a color for the separator.
     # possible values are:
@@ -86,7 +86,7 @@
 
     ### Text ###
 
-    font = UbuntuMono 6
+    font = Uroob 12
 
     # The spacing between lines.  If the height is smaller than the
     # font height, it will get raised to the font height.
@@ -126,7 +126,7 @@
     #   %n  progress value if set without any extra characters
     #   %%  Literal %
     # Markup is allowed
-    format = "<b>%s</b>\n%b"
+    format = "<span font="Uroob 15"><b>%s</b></span>\n%b"
 
     # Alignment of message text.
     # Possible values are "left", "center" and "right".
@@ -282,8 +282,8 @@
     #icon = /path/to/icon
 
 [urgency_normal]
-    background = "#744051"
-    foreground = "#f7f4f0"
+    background = "#1d272e"
+    foreground = "#4f806f"
     timeout = 10
     # Icon for notifications with normal urgency, uncomment to enable
     #icon = /path/to/icon

@@ -29,28 +29,40 @@ o.showmatch = true
 o.mouse = "a"
 
 o.colorcolumn = "100"
+o.cursorline = true
 
--- mostly obsolete due to fzf.vim
-o.path = "**"
-
-o.wildoptions = "pum,fuzzy"
+o.wildoptions = "pum"
 o.wildmode = "full,longest"
 o.wildmenu = true
 
 -- do not insert completion suggestions in
 -- insert mode eagerly, wait for input.
-o.completeopt = "menu,noinsert"
+o.completeopt = "menu,menuone,noinsert"
+
 
 -- default theme & settings
 vim.cmd("filetype indent plugin on")
---vim.cmd("colorscheme rose-pine")
-vim.cmd("colorscheme gruvbox")
+--vim.cmd("colorscheme sweet-fusion")
+vim.cmd("colorscheme kanagawa")
 o.background = "dark"
 
 -- filetype aware themes
 vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
     pattern = { "*.py" },
     callback = function()
-        vim.cmd("colorscheme codedark")
+        --vim.cmd("colorscheme sweet-fusion")
+    end,
+})
+
+
+-- make <C_n>/<C_p> autocomplete case sensitive
+vim.api.nvim_create_autocmd({ "InsertEnter" }, {
+    callback = function()
+        o.ignorecase = false
+    end,
+})
+vim.api.nvim_create_autocmd({ "InsertLeave" }, {
+    callback = function()
+        o.ignorecase = true
     end,
 })

@@ -3,14 +3,13 @@
 LAPTOP_SCREEN="DP-4"
 EXTERNAL_SCREEN="HDMI-0"
 
-CONF_ROOT=
+CONF_ROOT=$configuration_root_directory
 
 # Wrapping commands for startup apps. *_cc suffix is for ===============
 # "custom config." =====================================================
 
 alacritty_cc() {
-    ls "${CONF_ROOT}/alacritty.yml"
-    alacritty --config-file "${CONF_ROOT}/alacritty.yml"
+    $HOME/workspace/tools/alacritty/target/release/alacritty --config-file "${CONF_ROOT}/alacritty.toml"
 }
 
 compton_cc() {
@@ -152,6 +151,10 @@ music() {
 
 pass_s() {
   bash ~/.pass
+}
+
+user_s() {
+  bash ~/.user
 }
 
 pass_a() {

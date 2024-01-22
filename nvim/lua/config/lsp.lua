@@ -15,13 +15,21 @@ lspconfig.clangd.setup {
     root_dir = lspconfig.util.root_pattern(".git")
 }
 
+local pylint_args = require("util").maybe_pylint_args()
 lspconfig.pylsp.setup {
     settings = {
         pylsp = {
             plugins = {
+                -- since pycodestyle does not have
+                -- pyproject.toml support, bump the
+                -- line length to 100 here.
                 pycodestyle = {
-                    ignore = { "E203" },
+                    ignore = { "E203", "W503" },
                     maxLineLength = 100
+                },
+                pylint = {
+                    enabled = true,
+                    args = pylint_args
                 }
             }
         }
@@ -62,7 +70,7 @@ lspconfig.lua_ls.setup {
 }
 
 vim.api.nvim_create_autocmd("LspAttach", {
-    pattern = { "*.cpp", "*.h", "*.py", "*.lua" },
+    pattern = { "*.c", "*.cpp", "*.h", "*.cu", "*.py", "*.lua" },
     group = vim.api.nvim_create_augroup("UserLspConfig", {}),
     callback = function(ev)
         vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
