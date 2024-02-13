@@ -10,6 +10,7 @@ source /usr/share/doc/fzf/examples/key-bindings.bash
 
 # Enable longer HIST
 HISTSIZE=10000
+HISTFILESIZE=10000
 
 # Prompt
 PS1='[$(date +'%T')] ${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\w\[\033[00m\]\[\033[01;36m\]$(parse_git_branch)\[\033[00m\]\n\[\033[01;33m\]> \[\033[00m\] '
@@ -21,7 +22,22 @@ alias vim="nvim.appimage -u ${CONF_ROOT}/nvim/init.vim";
 alias pyh="PYTHONPATH=. python3"
 
 alias c='clear'
+alias f='fzf'
+alias fao='vim $(fzf)'
+alias fac='fzf | copy'
+
+alias copy='xclip -selection clipboard'
+alias clar='clear'
+alias cler='clear'
+
+alias ku='minikube kubectl --';
+
+alias swed='setxkbmap -layout se';
+alias engl='setxkbmap -layout us';
+alias turk='setxkbmap -layout tr';
+alias shrug="echo ¯\\\_\(ツ\)_/¯";
 alias t='date +'"'"'%T'"'"
+
 alias ga='git commit -a --amend'
 alias gt='git log --all --graph --pretty="format:%C(yellow)%h%Creset [%><(18,trunc)%Cblue%an%Creset] %s %C(auto)%d%Creset"';
 alias gd='git diff HEAD^ --stat'
@@ -80,24 +96,6 @@ with open('$1', 'rb') as src, open('$2', 'wb') as dst:
 ")
     echo $out
 }
-
-alias f='fzf'
-alias fao='vim $(fzf)'
-alias fac='fzf | copy'
-
-alias h='HISTTIMEFORMAT="" history | cut -c 8- | fzf'
-alias hr='eval $(h)'
-
-alias copy='xclip -selection clipboard'
-alias clar='clear'
-alias cler='clear'
-
-alias ku='minikube kubectl --';
-
-alias swed='setxkbmap -layout se';
-alias engl='setxkbmap -layout us';
-alias turk='setxkbmap -layout tr';
-alias shrug="echo ¯\\\_\(ツ\)_/¯";
 
 # Functions
 function show_i3_launch_commands() {
