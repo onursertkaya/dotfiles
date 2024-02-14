@@ -14,6 +14,8 @@ local function is_current_cursor_word_an_identifier()
         node_type == "identifier" or
         node_type == "type_identifier" or
         node_type == "field_identifier" or
+        node_type == "initializer_list" or
+        node_type == "compound_statement" or
         node_type == "import_from_statement" or
         node_type == "import_statement")
 end
