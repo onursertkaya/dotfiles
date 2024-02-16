@@ -66,4 +66,23 @@ function M.yank_current_file_path()
     vim.fn.setreg('"', vim.fn.expand("%p"))
 end
 
+function M.item_in(item, tabl)
+    for _, elem in ipairs(tabl) do
+        if item == elem then
+            return true
+        end
+    end
+    return false
+end
+
+function M.get_relative_path()
+    local cwd = require("nvim-tree.core").get_cwd()
+    if cwd == nil then
+        return
+    end
+
+    local node = require("nvim-tree.api").tree.get_node_under_cursor()
+    return require("nvim-tree.utils").path_relative(node.absolute_path, cwd)
+end
+
 return M

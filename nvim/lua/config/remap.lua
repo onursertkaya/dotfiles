@@ -1,54 +1,41 @@
 vim.g.mapleader = " "
 
--- show the mappings
-vim.keymap.set("n", "<leader>m", ":map<enter>")
-
 -- floating terminal
 vim.keymap.set("n", "<A-enter>", "<CMD>lua require('FTerm').toggle()<CR>")
 vim.keymap.set("t", "<A-enter>", "<C-\\><C-n><CMD>lua require('FTerm').toggle()<CR>")
 
-
--- fundamentals, leader
-vim.keymap.set("n", "<leader>c", ":noh<enter>")
+-- convenience bindings
+-- [
+vim.keymap.set("n", "<leader><leader>", ":noh<enter>")
 vim.keymap.set("n", "<leader>q", ":qa<enter>")
 vim.keymap.set("n", "<leader>r", ":%s/<C-R><C-W>//g<Left><Left>")
+vim.keymap.set("n", "<leader>h", require("util").yank_current_file_path)
+vim.keymap.set("n", "<leader>p", '"_ciw<C-R>0<Esc>')
+-- ]
 
 local tls_blt = require("telescope.builtin")
 
-
-local function get_relative_path()
-    local cwd = require("nvim-tree.core").get_cwd()
-    if cwd == nil then
-        return
-    end
-
-    local node = require("nvim-tree.api").tree.get_node_under_cursor()
-    return require("nvim-tree.utils").path_relative(node.absolute_path, cwd)
-end
-
-
-vim.keymap.set("n", "<leader>G", tls_blt.live_grep, {})
+-- pum bindings
+-- [
+vim.keymap.set("n", "<leader>m", ":map<enter>")
+vim.keymap.set("n", "<leader>g", tls_blt.live_grep, {})
+vim.keymap.set("n", "<leader>f", tls_blt.find_files, {})
+vim.keymap.set("n", "<leader>b", tls_blt.buffers, {})
+vim.keymap.set("n", "<leader>d", ":NvimTreeToggle<enter>")
+vim.keymap.set("n", "<leader>D", ":NvimTreeFindFile<enter>")
+vim.keymap.set("n", "<leader>G", tls_blt.grep_string, {})
 vim.keymap.set("n", "<leader>H", function()
-    local curr_dir = get_relative_path()
+    local curr_dir = require("util").get_relative_path()
     tls_blt.live_grep({
         search_dirs = { curr_dir },
         prompt_title = string.format('Grep in [%s]', curr_dir)
     })
 end
 )
-vim.keymap.set("n", "<leader>h", require("util").yank_current_file_path)
-vim.keymap.set("n", "<leader>g", tls_blt.grep_string, {})
-vim.keymap.set("n", "<leader>f", tls_blt.find_files, {})
-vim.keymap.set("n", "<leader>b", tls_blt.buffers, {})
-vim.keymap.set("n", "<leader>d", ":NvimTreeToggle<enter>")
-vim.keymap.set("n", "<leader>l", ":NvimTreeFindFile<enter>")
-
+-- ]
 
 -- distinguish delete and cut
 vim.keymap.set("v", "d", '"_d')
-
--- use _ciw instead of _diwP as the latter behaves differently if replacee word is the last in line.
-vim.keymap.set("n", "<leader>p", '"_ciw<C-R>0<Esc>')
 
 -- [VISUAL] move blocks
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
@@ -93,7 +80,7 @@ local M = {}
 
 function M.set_lsp_keymaps(opts)
     local filetype = vim.bo.filetype
-    if not (filetype == "cpp" or filetype == "python" or filetype == "lua" or filetype == "cuda" or filetype == "c") then
+    if not require("util").item_in(filetype, { "cpp", "python", "lua", "cuda", "c" }) then
         return
     end
 
@@ -116,8 +103,7 @@ function M.set_lsp_keymaps(opts)
             layout_strategy = "vertical",
             layout_config = { width = 0.8 },
             path_display = { "tail" }
-        }
-        )
+        })
     end, opts)
 
     -- diagnostics' jumps
@@ -126,15 +112,11 @@ function M.set_lsp_keymaps(opts)
     vim.keymap.set("n", "gp", vim.diagnostic.goto_prev)
 
     -- actions
-    vim.keymap.set("n", "<leader>s", vim.lsp.buf.signature_help, opts)
-    vim.keymap.set("n", "<leader>i", vim.lsp.buf.hover, opts)
-    vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, opts)
-
-    local format_func = function() vim.lsp.buf.format { async = true } end
-    vim.keymap.set("n", "<leader>t", format_func, opts)
-
-    -- disabled, opt for <leader>s instead
-    -- vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, opts)
+    vim.keymap.set("n", "<leader>la", vim.lsp.buf.code_action, opts)
+    vim.keymap.set("n", "<leader>ld", vim.lsp.buf.hover, opts)
+    vim.keymap.set("n", "<leader>lf", function() vim.lsp.buf.format { async = true } end, opts)
+    vim.keymap.set("n", "<leader>lr", vim.lsp.buf.rename, opts)
+    vim.keymap.set("n", "<leader>ls", vim.lsp.buf.signature_help, opts)
 end
 
 return M

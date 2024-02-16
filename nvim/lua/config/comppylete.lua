@@ -10,14 +10,16 @@ local function is_current_cursor_word_an_identifier()
     --require("util").log("cursor: " .. tostring(r) .. tostring(c))
 
     local node_type = node_at_cursor:type()
-    return node_at_cursor and (
-        node_type == "identifier" or
-        node_type == "type_identifier" or
-        node_type == "field_identifier" or
-        node_type == "initializer_list" or
-        node_type == "compound_statement" or
-        node_type == "import_from_statement" or
-        node_type == "import_statement")
+    return node_at_cursor and util.item_in(node_type, {
+        "identifier",
+        "type_identifier",
+        "field_identifier",
+        "initializer_list",
+        "argument_list",
+        "compound_statement",
+        "import_from_statement",
+        "import_statement"
+    })
 end
 
 local function make_callback_for_omnifunc_invocation(key, invoke_once)

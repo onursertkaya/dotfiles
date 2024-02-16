@@ -21,12 +21,11 @@ alias vim="nvim.appimage -u ${CONF_ROOT}/nvim/init.vim";
 # Convenient shortcuts
 alias pyh="PYTHONPATH=. python3"
 
-alias c='clear'
-alias f='fzf'
 alias fao='vim $(fzf)'
 alias fac='fzf | copy'
 
 alias copy='xclip -selection clipboard'
+alias c='clear'
 alias clar='clear'
 alias cler='clear'
 
