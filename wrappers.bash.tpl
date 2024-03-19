@@ -24,11 +24,16 @@ dunst_cc() {
 }
 
 rofi_show() {
-    rofi -config "${CONF_ROOT}/rofi/config" -show run
+    rofi -config "${CONF_ROOT}/rofi/config" -show drun -modi drun
 }
 
 rofi_window() {
     rofi -config "${CONF_ROOT}/rofi/config" -show window
+}
+
+rofi_control() {
+    pick=$(printf '%s\n' system_hibernate system_sleep system_shutdown screen_turn_off lock kbd_toggle | rofi -config "${CONF_ROOT}/rofi/config" -dmenu)
+    eval ${pick}
 }
 
 # Custom commands ======================================================
@@ -66,18 +71,13 @@ brightness_down() {
     xrandr --output ${LAPTOP_SCREEN} --brightness $decreased
 }
 
-notify_control_mode_keybindings() {
-    h='h - help'
-    e='e - end i3 session'
-    s='s - sleep'
-    q='q - shutdown'
-    c='c - i3 config reload'
-    r='r - restart i3 session'
-    j='j - lock'
-    l='l - screen off'
-    k='k - toggle keyboard layout'
-
-    notify-send commands "$h\n$e\n$s\n$q\n$c\n$r\n$j\n$l\n$k"
+shot() {
+    FILENAME=$(date +'%F_%H-%M-%S');
+    if [[ $1 != '' ]]; then
+        FILENAME=$1
+    fi
+    mkdir -p  ~/Pictures/ss;
+    scrot -s "${HOME}/Pictures/ss/$1.png";
 }
 
 screen_turn_off() {
@@ -116,37 +116,24 @@ kbd_toggle() {
     esac
 }
 
+# systemctl suspend writes the state to ram
+# + faster to wake up
+# - no effect on disk
+# - more power consumption
 system_sleep() {
-    # systemctl hibernate writes the state to disk
-    # + less power consumption
-    # - heavier on the disk
-    # - asks for disk password if there's one
-
-    # systemctl suspend writes the state to ram
-    # + faster to wake up
-    # - no effect on disk
-    # - more power consumption
     systemctl suspend
+}
+
+# systemctl hibernate writes the state to disk
+# + less power consumption
+# - heavier on the disk
+# - asks for disk password if there's one
+system_hibernate() {
+    systemctl hibernate
 }
 
 system_shutdown() {
     systemctl poweroff
-}
-
-browsers() {
-  google-chrome &
-  firefox &
-}
-
-music() {
-  pacmd set-default-sink alsa_output.pci-0000_00_1f.3.analog-stereo
-  pacmd set-default-source alsa_input.pci-0000_00_1f.3.analog-stereo
-
-  pacmd set-sink-volume alsa_output.pci-0000_00_1f.3.analog-stereo 0
-  pacmd set-source-volume alsa_input.pci-0000_00_1f.3.analog-stereo 0
-
-  spotify &
-  pulseeffects &
 }
 
 pass_s() {

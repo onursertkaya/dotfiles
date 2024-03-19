@@ -93,33 +93,23 @@ bindsym $mod+Shift+0 move container to workspace number $ws10
 
 # control
 bindsym $mod+Return exec "wrappers.bash alacritty_cc", workspace number $ws10
+bindsym $mod+Escape exec "wrappers.bash rofi_control"
 bindsym $mod+d      exec "wrappers.bash rofi_show"
 bindsym $mod+f      exec "wrappers.bash rofi_window"
 
 bindsym $mod+Ctrl+1 exec "wrappers.bash noscreen"
 bindsym $mod+Ctrl+2 exec "wrappers.bash homescreen"
 
-
-bindsym $mod+Ctrl+m exec --no-startup-id "wrappers.bash music"
-bindsym $mod+Ctrl+b exec --no-startup-id "wrappers.bash browsers"
-
+bindsym F11 exec "wrappers.bash shot"
 bindsym F10 exec "wrappers.bash pass_s"
 bindsym F9 exec "wrappers.bash user_s"
 
 # modes
-set $control_mode "control [ h ]"
+set $control_mode "control [ e | c | r ]"
 mode $control_mode {
-    bindsym h mode "default"; exec "wrappers.bash notify_control_mode_keybindings"
     bindsym e mode "default"; exec "i3-nagbar -t warning -m 'Logout?' -B 'Yep.' 'i3-msg exit'"
-    bindsym s mode "default"; exec "wrappers.bash system_sleep";
-    bindsym q mode "default"; exec "wrappers.bash system_shutdown";
     bindsym c mode "default"; reload
     bindsym r mode "default"; restart
-
-    bindsym l mode "default"; exec "wrappers.bash screen_turn_off"
-    bindsym j mode "default"; exec "wrappers.bash lock"
-    bindsym k exec "wrappers.bash kbd_toggle"
-
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
@@ -160,8 +150,8 @@ mode $move_mode {
     bindsym Escape mode "default"
 }
 
-bindsym $mod+Ctrl+Escape mode $control_mode
-bindsym $mod+c mode $layout_mode
+bindsym $mod+c mode $control_mode
+bindsym $mod+s mode $layout_mode
 bindsym $mod+r mode $resize_mode
 bindsym $mod+m mode $move_mode
 
