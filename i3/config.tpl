@@ -100,12 +100,12 @@ bindsym $mod+f      exec "wrappers.bash rofi_window"
 bindsym $mod+Ctrl+1 exec "wrappers.bash noscreen"
 bindsym $mod+Ctrl+2 exec "wrappers.bash homescreen"
 
-bindsym F11 exec "wrappers.bash shot"
+bindsym Print exec "wrappers.bash shot"
 bindsym F10 exec "wrappers.bash pass_s"
 bindsym F9 exec "wrappers.bash user_s"
 
 # modes
-set $control_mode "control [ e | c | r ]"
+set $control_mode "i3 control [ e | c | r ]"
 mode $control_mode {
     bindsym e mode "default"; exec "i3-nagbar -t warning -m 'Logout?' -B 'Yep.' 'i3-msg exit'"
     bindsym c mode "default"; reload

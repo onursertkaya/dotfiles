@@ -16,54 +16,35 @@ function M.log(something)
     end
 end
 
-function M.replace_nvimtree(name)
-    -- replace NvimTree_X to cwd
-    if name:sub(1, #"NvimTree_") == "NvimTree_" then
-        local full_path = vim.fn.getcwd()
-        return full_path:sub(full_path:match("^.*()/") + 1, -1)
-    end
-    return name
-end
-
-local function search_pylint_in_toplevel(root_dir, dir_hint)
-    local pylint_files = {}
-    for m in vim.fn.globpath(root_dir, dir_hint .. "*/**/pylint"):gmatch("%S+") do
-        table.insert(pylint_files, m)
-    end
-    table.sort(pylint_files)
-    if pylint_files == nil then
-        return nil
-    end
-end
-
-function M.greedy_pylint_conf_path()
-    local cwd = vim.fn.getcwd()
-    if vim.fn.filereadable(cwd .. "/pylint") then
-        return cwd .. "/pylint"
-    end
-
-    local maybe_under_conf = search_pylint_in_toplevel(cwd, "conf")
-    if maybe_under_conf ~= nil then
-        return maybe_under_conf[1]
-    end
-
-    local last_resort = search_pylint_in_toplevel(cwd, "conf")
-    if last_resort ~= nil then
-        return last_resort[1]
-    end
-end
-
-function M.maybe_pylint_args()
-    local pylint_args = {}
-    local pylint_dir = M.greedy_pylint_conf_path()
-    if pylint_dir ~= nil then
-        pylint_args = { "--rcfile", pylint_dir }
-    end
-    return pylint_args
+local function set_clipboard(text)
+    vim.fn.setreg('', text)  -- set the default register
+    vim.fn.setreg('+', text) -- set clipboard
 end
 
 function M.yank_current_file_path()
-    vim.fn.setreg('"', vim.fn.expand("%p"))
+    local curr_buf_path = vim.fn.expand("%") .. "\n"
+    set_clipboard(curr_buf_path)
+end
+
+function M.yank_word_under_cursor_to_register_interactive()
+    vim.ui.input({ prompt = "Yank to register: " }, function(reg_name)
+        assert(reg_name:len() == 1)
+        assert(reg_name:find("%a") ~= nil)
+        M.feedkeys("viw" .. '"' .. reg_name .. "y")
+    end)
+end
+
+function M.replace_string_to_cwd(text, to_replace)
+    -- replace "to_replace" to cwd
+    if text:sub(1, #to_replace) == to_replace then
+        local cwd = vim.fn.getcwd()
+        return cwd:sub(cwd:match("^.*()/") + 1, -1)
+    end
+    return text
+end
+
+function M.endswith(str, suffix)
+    return str:sub(- #suffix) == suffix
 end
 
 function M.item_in(item, tabl)
@@ -75,14 +56,59 @@ function M.item_in(item, tabl)
     return false
 end
 
-function M.get_relative_path()
-    local cwd = require("nvim-tree.core").get_cwd()
-    if cwd == nil then
-        return
+function M.replace_word_under_cursor_in_current_buffer()
+    M.feedkeys(":%s/<C-R><C-W>//g<Left><Left>")
+end
+
+-- LSP
+function M.lsp_definition_in_split_cb()
+    return function(o)
+        vim.cmd("vs")
+        vim.lsp.buf.definition(o)
+    end
+end
+
+function M.lsp_definition_in_tab_cb()
+    return function(o)
+        vim.cmd("tab split")
+        vim.lsp.buf.definition(o)
+    end
+end
+
+function M.open_cword_in_external()
+    -- not perfect but does the job
+
+    local function has_http(u)
+        return (u:find("^https?://.*") ~= nil)
     end
 
-    local node = require("nvim-tree.api").tree.get_node_under_cursor()
-    return require("nvim-tree.utils").path_relative(node.absolute_path, cwd)
+    local function is_url(u)
+        -- must start with a letter
+        if u:sub(1, 1):find("^[^%a]") then
+            return false
+        end
+
+        -- Nx(letters.) + (org/com/net) where N >= 1
+        for _, ext in ipairs({"org", "com", "net"}) do
+            if u:find("(%a+%.+)" .. ext) ~= nil then
+                return true
+            end
+        end
+        return false
+    end
+
+    local function is_path(u)
+        return u:find("^/%w+/?") ~= nil
+    end
+
+    local candidate = vim.fn.expand("<cWORD>")
+    if has_http(candidate) or is_url(candidate) then
+        os.execute("sensible-browser --incognito " .. candidate)
+    elseif is_path(candidate) then
+        os.execute("nohup nautilus " .. candidate .. " > /dev/null &")
+    else
+        vim.print("word under cursor " .. candidate .. " neither a url nor a path")
+    end
 end
 
 return M

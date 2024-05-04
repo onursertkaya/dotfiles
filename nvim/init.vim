@@ -1,21 +1,30 @@
 call plug#begin('~/.nvim_plugged')
 
-Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.2' }
-
-Plug 'numToStr/FTerm.nvim'
-
+" lsp & treesitter
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'nvim-tree/nvim-tree.lua'
+" ----
 
+" package management
 Plug 'williamboman/mason.nvim', { 'do': ':MasonUpdate' }
 Plug 'williamboman/mason-lspconfig.nvim'
-Plug 'neovim/nvim-lspconfig'
+" ----
 
+" user interface
+"   PUM (fuzzy) search
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.2' }
+Plug 'nvim-telescope/telescope-file-browser.nvim'
+Plug 'nvim-tree/nvim-web-devicons'
+
+"   lines
 Plug 'nvim-lualine/lualine.nvim'
-Plug 'lewis6991/gitsigns.nvim'
 
+"   git
+Plug 'lewis6991/gitsigns.nvim'
+" ----
+
+" themes
 Plug 'rebelot/kanagawa.nvim'
 Plug 'Shadorain/shadotheme'
 Plug 'rose-pine/neovim'

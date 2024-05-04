@@ -1,55 +1,94 @@
 local util = require("util")
 local ts_utils = require("nvim-treesitter.ts_utils")
 
-
-local function is_current_cursor_word_an_identifier()
+local function get_node_at_cursor()
     -- to debug, use root:range(false), treesitter and vim.api has off-by-1 indexing.
     local root = ts_utils.get_node_at_cursor()
+    if root == nil then
+        return nil
+    end
+
     local r, c = unpack(vim.api.nvim_win_get_cursor(0))
     local node_at_cursor = root:named_descendant_for_range(r - 1, c - 1, r - 1, c - 1)
-    --require("util").log("cursor: " .. tostring(r) .. tostring(c))
+    return node_at_cursor
+end
 
-    local node_type = node_at_cursor:type()
-    return node_at_cursor and util.item_in(node_type, {
-        "identifier",
-        "type_identifier",
-        "field_identifier",
-        "initializer_list",
+local function is_current_cursor_an_argument()
+    local node_at_cursor = get_node_at_cursor()
+    if node_at_cursor == nil then
+        return false
+    end
+
+    local within_function_call = false
+    local current_node = node_at_cursor
+    while current_node do
+        if util.item_in(current_node:type(), { "keyword_argument", "argument_list", "field_identifier", "init_declarator" }) then
+            within_function_call = true
+            break
+        end
+        current_node = current_node:parent()
+    end
+
+    return within_function_call
+end
+
+
+local function is_current_cursor_word_an_identifier()
+    local node_at_cursor = get_node_at_cursor()
+    if node_at_cursor == nil then
+        return false
+    end
+
+    return node_at_cursor and util.item_in(node_at_cursor:type(), {
+        -- closing parenthesis, for temporaries
         "argument_list",
+
+        -- scope variables, python classes
+        "identifier",
+
+        -- cpp classes/structs
+        "type_identifier",
+
+        -- cpp {}
+        "initializer_list",
+
+        -- ?
         "compound_statement",
+
+        -- python import / from .* import .*
         "import_from_statement",
         "import_statement"
     })
 end
 
-local function make_callback_for_omnifunc_invocation(key, invoke_once)
+local function is_pum_visible()
+    return vim.fn.pumvisible() == 1
+end
+
+local function omnifunc_invocation_cb(key, invoke_once)
     return function()
-        local pum_visible = (vim.fn.pumvisible() == 0)
         local identifier = is_current_cursor_word_an_identifier()
 
-        --require("util").log("identifier: " .. tostring(identifier))
-        local feed_omni = "<C-x><C-o>"
-        if ((not identifier) or (invoke_once and pum_visible)) then
-            feed_omni = ""
+        local feed_omni = ""
+        if (identifier and (not invoke_once or is_pum_visible())) then
+            feed_omni = "<C-x><C-o>"
         end
         util.feedkeys(key .. feed_omni)
     end
 end
 
-local function make_callback_for_signature_help(key, invoke_while_pumvisible)
+local function signature_help_cb(key, invoke_while_pumvisible)
     return function()
         util.feedkeys(key)
-        local pum_visible = (vim.fn.pumvisible() == 0)
-        local identifier = is_current_cursor_word_an_identifier()
+        local identifier = is_current_cursor_an_argument() or is_current_cursor_word_an_identifier()
 
-        if ((not identifier) or (invoke_while_pumvisible and not pum_visible)) then
-            return
+        if (identifier and (not invoke_while_pumvisible or not is_pum_visible())) then
+            vim.schedule(vim.lsp.buf.signature_help)
         end
-        vim.schedule(vim.lsp.buf.signature_help)
     end
 end
 
-local function make_callback_for_clangd_header_source_jump()
+local function clangd_header_source_jump_cb()
     return function()
         vim.cmd("ClangdSwitchSourceHeader")
     end
@@ -86,28 +125,32 @@ local function insert_signature_help()
     util.feedkeys("<Esc>%f,i")
 end
 
+local function insert_completion_cb(key)
+    return function()
+        if is_pum_visible() then
+            util.feedkeys(key)
+        else
+            util.feedkeys(key .. "<C-n>")
+        end
+    end
+end
+
 local M = {}
 
-function M.setup(opts)
-    local filetype = vim.bo.filetype
-
-    require("util").log("[comppylete] setting up for filetype" .. filetype .. "\n")
-
-    -- define language triggers
+local function language_specific_triggers(filetype, opts)
     local language_omnifunc_triggers = { "." }
-    if filetype == "cpp" or filetype == "cuda" then
+    if util.item_in(filetype, { "cpp", "cuda" }) then
         for _, t in ipairs({ "::", "->" }) do
             table.insert(language_omnifunc_triggers, t)
         end
     end
 
-    require("util").log("[comppylete] language triggers: " .. table.concat(language_omnifunc_triggers))
-
-    -- set language triggers
     for _, t in ipairs(language_omnifunc_triggers) do
-        vim.keymap.set("i", t, make_callback_for_omnifunc_invocation(t, false), opts)
+        vim.keymap.set("i", t, omnifunc_invocation_cb(t, false), opts)
     end
+end
 
+local function generic_triggers(opts)
     -- define generic triggers
     local generic_omnifunc_triggers = {
         ["<C-space>"] = { "", false },
@@ -117,27 +160,48 @@ function M.setup(opts)
     -- set generic triggers
     for t, feed in pairs(generic_omnifunc_triggers) do
         local feed_key, once = unpack(feed)
-        vim.keymap.set("i", t, make_callback_for_omnifunc_invocation(feed_key, once), opts)
+        vim.keymap.set("i", t, omnifunc_invocation_cb(feed_key, once), opts)
     end
+end
 
+local function insert_completion_triggers(opts)
+    -- set insert completion triggers
+    for p in ("abcdefghijklmnopqrstwxvyz"):gmatch(".") do
+        vim.keymap.set("i", p, insert_completion_cb(p), opts)
+    end
+end
 
+local function signature_help_triggers(opts)
     -- define signature help triggers
-    local signature_help_triggers = {
+    local triggers = {
         ["<CR>"] = { true },
         ["("] = { false },
+        ["{"] = { false },
         [","] = { false }
     }
 
     -- set signature help triggers
-    for t, while_pumvisible in pairs(signature_help_triggers) do
-        vim.keymap.set("i", t, make_callback_for_signature_help(t, while_pumvisible), opts)
+    for t, while_pumvisible in pairs(triggers) do
+        vim.keymap.set("i", t, signature_help_cb(t, while_pumvisible), opts)
     end
+end
 
+local function language_specific_functionality(filetype, opts)
     if filetype == "python" then
         vim.keymap.set("i", "<C-A-s>", insert_signature_help, opts)
-    elseif filetype == "cpp" or filetype == "cuda" then
-        vim.keymap.set("n", "gh", make_callback_for_clangd_header_source_jump(), opts)
+    elseif util.item_in(filetype, { "cpp", "cuda" }) then
+        vim.keymap.set("n", "gh", clangd_header_source_jump_cb(), opts)
     end
+end
+
+function M.setup(opts)
+    insert_completion_triggers(opts)
+    generic_triggers(opts)
+    signature_help_triggers(opts)
+
+    local filetype = vim.bo.filetype
+    language_specific_triggers(filetype, opts)
+    language_specific_functionality(filetype, opts)
 end
 
 return M

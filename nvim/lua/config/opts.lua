@@ -35,25 +35,16 @@ o.wildoptions = "pum"
 o.wildmode = "full,longest"
 o.wildmenu = true
 
+o.switchbuf:append("usetab")
+
 -- do not insert completion suggestions in
 -- insert mode eagerly, wait for input.
 o.completeopt = "menu,menuone,noinsert"
 
-
 -- default theme & settings
 vim.cmd("filetype indent plugin on")
---vim.cmd("colorscheme sweet-fusion")
 vim.cmd("colorscheme kanagawa")
 o.background = "dark"
-
--- filetype aware themes
-vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
-    pattern = { "*.py" },
-    callback = function()
-        --vim.cmd("colorscheme sweet-fusion")
-    end,
-})
-
 
 -- make <C_n>/<C_p> autocomplete case sensitive
 vim.api.nvim_create_autocmd({ "InsertEnter" }, {

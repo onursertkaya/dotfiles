@@ -1,11 +1,10 @@
 local lspconfig = require("lspconfig")
-local remap = require("remap")
 
 -- disable virtual text
 vim.diagnostic.config({ virtual_text = false })
 
 ---- for enhanced debugging
--- vim.lsp.set_log_level 'debug'
+-- vim.lsp.set_log_level('debug')
 -- if vim.fn.has 'nvim-0.5.1' == 1 then
 --   require('vim.lsp.log').set_format_func(vim.inspect)
 -- end
@@ -15,7 +14,7 @@ lspconfig.clangd.setup {
     root_dir = lspconfig.util.root_pattern(".git")
 }
 
-local pylint_args = require("util").maybe_pylint_args()
+local pylint_args = require("py_helpers").maybe_pylint_args()
 lspconfig.pylsp.setup {
     settings = {
         pylsp = {
@@ -75,6 +74,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(ev)
         vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
         local buffer_opts = { buffer = ev.buf }
-        remap.set_lsp_keymaps(buffer_opts)
+        require("remap").set_lsp_keymaps(buffer_opts)
     end,
 })

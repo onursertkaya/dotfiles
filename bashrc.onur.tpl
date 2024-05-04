@@ -97,21 +97,8 @@ with open('$1', 'rb') as src, open('$2', 'wb') as dst:
 }
 
 # Functions
-function show_i3_launch_commands() {
-  notify-send 'commands' '(b)rowsers, (m)usic'
-}
-
-function alacritty_set_font() {
-    sed -i 's|size: .*|size: '$1'.0|g' $CONF_ROOT/alacritty.yml
-}
-
-function shot() {
-    FILENAME=$(date +'%F_%H-%M-%S');
-    if [[ $1 != '' ]]; then
-        FILENAME=$1
-    fi
-    mkdir -p  ~/Pictures/ss;
-    scrot -s "${HOME}/Pictures/ss/$1.png";
+function rename_window() {
+    xdotool set_window --name "$1" $(xdotool getactivewindow)
 }
 
 function parse_git_branch() {

@@ -1,7 +1,49 @@
-Util = require("util")
-
 -- hide cmdline
 vim.opt.cmdheight = 0
+
+local telescope = require("telescope")
+local util = require("util")
+local tls_util = require("telescope_util")
+
+telescope.setup {
+    pickers = {
+        find_files = {
+            mappings = {
+                i = {
+                    ["<C-f>"] = tls_util.telescope_grep_in_dir_cb()
+                },
+            },
+        },
+    },
+    extensions = {
+        file_browser = {
+            grouped = true,
+            dir_icon = "📁",
+            hijack_netrw = true,
+            mappings = {
+                ["i"] = {
+                    ["<C-f>"] = tls_util.telescope_grep_in_dir_cb(),
+                    ["<C-space>"] = telescope.extensions.file_browser.actions.goto_cwd,
+                    ["<C-t>"] = require("telescope.actions").select_tab,
+                }
+            },
+        },
+    },
+}
+telescope.load_extension("file_browser")
+
+local function rename_no_name(name, _)
+    return util.replace_string_to_cwd(name, "[No Name]")
+end
+
+local function tabline_format(name, ctx)
+    local bufnr = vim.fn.tabpagebuflist(ctx.tabnr)[vim.fn.tabpagewinnr(ctx.tabnr)]
+    if bufnr == util.term_buf then
+        return "⚒"
+    else
+        return rename_no_name(name)
+    end
+end
 
 require("lualine").setup {
     sections = {
@@ -13,9 +55,7 @@ require("lualine").setup {
             },
             {
                 "filename",
-                fmt = function(name, _)
-                    return Util.replace_nvimtree(name)
-                end
+                fmt = rename_no_name,
             }
         }
     },
@@ -23,9 +63,8 @@ require("lualine").setup {
         lualine_c = {
             {
                 "filename",
-                fmt = function(name, _)
-                    return Util.replace_nvimtree(name)
-                end
+                path = 1,
+                fmt = rename_no_name,
             }
         },
         lualine_x = { "location" }
@@ -35,7 +74,7 @@ require("lualine").setup {
             {
                 "tabs",
                 tab_max_length = 40,
-                max_length = vim.o.columns / 3,
+                max_length = vim.o.columns,
                 mode = 1,
                 path = 0,
                 use_mode_colors = false,
@@ -43,42 +82,8 @@ require("lualine").setup {
                 symbols = {
                     modified = "[+]",
                 },
-                fmt = function(name, context)
-                    name = Util.replace_nvimtree(name)
-
-                    local buflist = vim.fn.tabpagebuflist(context.tabnr)
-                    local winnr = vim.fn.tabpagewinnr(context.tabnr)
-                    local bufnr = buflist[winnr]
-                    local mod = vim.fn.getbufvar(bufnr, "&mod")
-
-                    return name .. (mod == 1 and " +" or "")
-                end
+                fmt = tabline_format,
             }
         }
     }
 }
-
--- disable netrw
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
-vim.opt.termguicolors = true
-
-require("nvim-tree").setup({
-    sort_by = "case_sensitive",
-    view = {
-        width = 40,
-    },
-    git = {
-        timeout = 800,
-    },
-    filters = {
-        -- do not ignore .gitignore files by default
-        -- I to toggle
-        git_ignored = false,
-    },
-    renderer = {
-        icons = {
-            git_placement = "after",
-        }
-    }
-})

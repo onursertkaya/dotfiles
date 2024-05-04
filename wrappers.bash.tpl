@@ -32,7 +32,7 @@ rofi_window() {
 }
 
 rofi_control() {
-    pick=$(printf '%s\n' system_hibernate system_sleep system_shutdown screen_turn_off lock kbd_toggle | rofi -config "${CONF_ROOT}/rofi/config" -dmenu)
+    pick=$(printf '%s\n' system_hibernate system_sleep system_shutdown screen_turn_off lock kbd_toggle shot | rofi -config "${CONF_ROOT}/rofi/config" -dmenu)
     eval ${pick}
 }
 
