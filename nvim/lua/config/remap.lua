@@ -13,15 +13,15 @@ vim.keymap.set("t", "<A-Esc>", "<C-\\><Esc>")
 vim.keymap.set("n", "<A-S-enter>", termit.termit_new)
 vim.keymap.set("n", "<A-enter>", termit.termit_global)
 
+local tls_blt = require("telescope.builtin")
 -- convenience bindings
 -- [
 vim.keymap.set("n", "<leader><leader>", ":noh<enter>")
+vim.keymap.set("n", "<leader><enter>", tls_blt.resume)
 vim.keymap.set("n", "<leader>q", ":qa<enter>")
 vim.keymap.set("n", "<leader>p", "viwP")
 -- ]
 
-local tls_blt = require("telescope.builtin")
-local tls_util = require("telescope_util")
 -- pum bindings
 -- [
 vim.keymap.set("n", "<leader>b", tls_blt.buffers, {})
@@ -34,6 +34,7 @@ vim.keymap.set("n", "<leader>d", ":Telescope file_browser path=%:p:h select_buff
 vim.keymap.set("n", "<leader>g", tls_blt.live_grep, {})
 vim.keymap.set("n", "<leader>G", tls_blt.grep_string, {})
 vim.keymap.set("n", "<leader>f", tls_blt.find_files, {})
+local tls_util = require("telescope_util")
 vim.keymap.set("n", "<leader>F", tls_util.telescope_find_directories, {})
 vim.keymap.set("n", "<leader>a", tls_util.telescope_actions_picker_cb("n"), {})
 -- ]

@@ -1,6 +1,6 @@
 set $mod Mod4
 
-font pango:Uroob bold 12
+font pango:Roboto mono 9
 
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 exec --no-startup-id nm-applet
@@ -55,16 +55,16 @@ bindsym $mod+Ctrl+Shift+Right move workspace next
 bindsym $mod+Ctrl+j workspace prev
 bindsym $mod+Ctrl+k workspace next
 
-set $ws1 "1"
-set $ws2 "2"
-set $ws3 "3"
-set $ws4 "4"
-set $ws5 "5"
-set $ws6 "6"
-set $ws7 "7"
-set $ws8 "8"
-set $ws9 "9"
-set $ws10 "10"
+set $ws1 "1:●︎"
+set $ws2 "2:●︎"
+set $ws3 "3:●︎"
+set $ws4 "4:●︎"
+set $ws5 "5:●︎"
+set $ws6 "6:●︎"
+set $ws7 "7:●︎"
+set $ws8 "8:●︎"
+set $ws9 "9:●︎"
+set $ws10 "10:●︎"
 
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
@@ -157,40 +157,37 @@ bindsym $mod+m mode $move_mode
 
 
 # colors
-set $grey_dark   #1d272e
-set $grey_light  #999999
-set $grey_med    #444444
-
-set $c1_med   #b5bdba
-set $c1_light #1a8077
-
+set $white       #ffffff
+set $background   #1d272e
+set $gray    #666666
 set $separator #7da6bd
-
 set $text_1 #4f806f
+set $text_urgent_faint #aabbdd
+set $text_urgent #ffaacc
 
 
 # bar
 bar {
     status_command i3status --config ~/.config/i3/i3status.conf
-    #status_command i3blocks
     tray_output primary
-    font pango:Uroob regular 12
+    strip_workspace_numbers yes
+    font pango:Roboto mono 10
     separator_symbol "//"
     position bottom
 
     colors {
-        background $grey_dark
+        background $background
 
-        statusline $grey_light
+        statusline $text_urgent_faint
         separator  $separator
 
-        # <colorclass>     <border>     <background>   <text>
-        focused_workspace  $c1_med      $text_1       $text_1
-        active_workspace   $c1_med      $text_1       $text_1
-        inactive_workspace $text_1      $text_1       $text_1
+        # <colorclass>     <border>     <background>  <text>
+        focused_workspace  $background  $background   $white
+        active_workspace   $background  $background   $text_1 
+        inactive_workspace $background  $background   $text_1
 
-        urgent_workspace   #ffffff           #cc2458           #ffffff
-        binding_mode       #ffffff           #cc2458           #ffffff
+        urgent_workspace   $background  $background   $text_urgent
+        binding_mode       $background  $background   $text_urgent
     }
 }
 
@@ -202,12 +199,12 @@ default_border none
 #for_window [floating] border pixel 1
 
 
-# class                 border      backgr.     text       indicator  child_border
-client.focused          $text_1     $grey_dark  $text_1    #ffffff    #cccccc
-client.focused_inactive $c1_med     $grey_dark  $grey_med  #ffffff    #777777
-client.unfocused        $c1_med     $grey_dark  $grey_med  #ffffff    #333333
-client.urgent           #ffffff     #cc2458     $grey_med
-client.placeholder      #aa0000     #cc2458     $grey_med
+# class                 border        backgr.      text                indicator  child_border
+client.focused          $background   $background  $text_urgent_faint  $white     #cccccc
+client.focused_inactive $background   $background  $gray               $white     #777777
+client.unfocused        $background   $background  $gray               $white     #333333
+client.urgent           #background   #cc2458      $text_urgent
+client.placeholder      #background   #cc2458      $text_urgent
 
 client.background       #00ff00
 

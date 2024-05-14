@@ -29,7 +29,7 @@
     # the top and down respectively.
     # The width can be negative.  In this case the actual width is the
     # screen width minus the width defined in within the geometry option.
-    geometry = "384x10+1728+50"
+    geometry = "600x10+1620+50"
 
     # Show how many messages are currently hidden (because of geometry).
     indicate_hidden = yes
@@ -54,17 +54,17 @@
     separator_height = 2
 
     # Padding between text and separator.
-    padding = 8
+    padding = 24
 
     # Horizontal padding.
-    horizontal_padding = 8
+    horizontal_padding = 24
 
     # Defines width in pixels of frame around the notification window.
     # Set to 0 to disable.
-    frame_width = 1
+    frame_width = 0
 
     # Defines color of the frame around the notification window.
-    frame_color = "#7da6bd"
+    frame_color = "#1d272e"
 
     # Define a color for the separator.
     # possible values are:
@@ -86,7 +86,7 @@
 
     ### Text ###
 
-    font = Uroob 12
+    font = Roboto 9
 
     # The spacing between lines.  If the height is smaller than the
     # font height, it will get raised to the font height.
@@ -126,11 +126,11 @@
     #   %n  progress value if set without any extra characters
     #   %%  Literal %
     # Markup is allowed
-    format = "<span font="Uroob 15"><b>%s</b></span>\n%b"
+    format = "<span font="Roboto 11"><b>%s</b></span>\n%b"
 
     # Alignment of message text.
     # Possible values are "left", "center" and "right".
-    alignment = center
+    alignment = left
 
     # Show age of message if message is older than show_age_threshold
     # seconds.
@@ -139,17 +139,17 @@
 
     # Split notifications into multiple lines if they don't fit into
     # geometry.
-    word_wrap = yes
+    word_wrap = no
 
     # When word_wrap is set to no, specify where to make an ellipsis in long lines.
     # Possible values are "start", "middle" and "end".
-    ellipsize = middle
+    ellipsize = end
 
     # Ignore newlines '\n' in notifications.
     ignore_newline = no
 
     # Stack together notifications with the same content
-    stack_duplicates = true
+    stack_duplicates = false
 
     # Hide the count of stacked notifications with the same content
     hide_duplicate_count = false
@@ -275,23 +275,23 @@
 [urgency_low]
     # IMPORTANT: colors have to be defined in quotation marks.
     # Otherwise the "#" and following would be interpreted as a comment.
-    background = "#222222"
-    foreground = "#888888"
+    background = "#1d272e"
+    foreground = "#aabbdd"
     timeout = 10
     # Icon for notifications with low urgency, uncomment to enable
     #icon = /path/to/icon
+    icon = /usr/share/icons/Humanity/actions/24/gtk-info.svg
 
 [urgency_normal]
     background = "#1d272e"
-    foreground = "#4f806f"
+    foreground = "#aabbdd"
     timeout = 10
     # Icon for notifications with normal urgency, uncomment to enable
     #icon = /path/to/icon
 
 [urgency_critical]
-    background = "#900000"
-    foreground = "#ffffff"
-    frame_color = "#ff0000"
+    background = "#1d272e"
+    foreground = "#ffaacc"
     timeout = 0
     # Icon for notifications with critical urgency, uncomment to enable
     #icon = /path/to/icon
