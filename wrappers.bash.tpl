@@ -3,24 +3,33 @@
 LAPTOP_SCREEN="DP-4"
 EXTERNAL_SCREEN="HDMI-0"
 
-CONF_ROOT=$configuration_root_directory
+CONF_ROOT=
+ALACRITTY_BIN=$CONF_ROOT/../tools/alacritty/target/release/alacritty
 
 # Wrapping commands for startup apps. *_cc suffix is for ===============
 # "custom config." =====================================================
 
 alacritty_cc() {
-    $HOME/workspace/tools/alacritty/target/release/alacritty --config-file "${CONF_ROOT}/alacritty.toml"
+    $ALACRITTY_BIN --config-file "${CONF_ROOT}/alacritty.toml"
 }
 
-compton_cc() {
-    compton --config "${CONF_ROOT}/compton.conf"
+compositor_cc() {
+    if [[ $IS_UBUNTU = true ]]; then
+        compton --config "${CONF_ROOT}/compton.conf"
+    else
+        picom --config "${CONF_ROOT}/picom.conf"
+    fi
 }
 
 dunst_cc() {
     # stop the dunst instance spawned by systemd, which
     # is installed by i3.
     systemctl stop dunst --user
-    dunst -conf "${CONF_ROOT}/dunstrc"
+    if [[ $IS_UBUNTU = true ]]; then
+        dunst -conf "${CONF_ROOT}/dunstrc"
+    else
+        dunst -conf "${CONF_ROOT}/dunstrc.arch"
+    fi
 }
 
 rofi_show() {
@@ -32,7 +41,18 @@ rofi_window() {
 }
 
 rofi_control() {
-    pick=$(printf '%s\n' system_hibernate system_sleep system_shutdown screen_turn_off lock kbd_toggle shot | rofi -config "${CONF_ROOT}/rofi/config" -dmenu)
+    pick=$(printf '%s\n' \
+        system_hibernate \
+        system_sleep \
+        system_shutdown \
+        screen_turn_off \
+        lock \
+        kbd_toggle \
+        kbd_init \
+        shot \
+        homescreen \
+        noscreen \
+        | rofi -config "${CONF_ROOT}/rofi/config" -dmenu -p 'Control')
     eval ${pick}
 }
 
@@ -71,13 +91,17 @@ brightness_down() {
     xrandr --output ${LAPTOP_SCREEN} --brightness $decreased
 }
 
-shot() {
+function rename_window() {
+    xdotool set_window --name "$1" $(xdotool getactivewindow)
+}
+
+function shot() {
     FILENAME=$(date +'%F_%H-%M-%S');
     if [[ $1 != '' ]]; then
         FILENAME=$1
     fi
     mkdir -p  ~/Pictures/ss;
-    scrot -s "${HOME}/Pictures/ss/$1.png";
+    scrot -s --file "${HOME}/Pictures/ss/${FILENAME}.png";
 }
 
 screen_turn_off() {

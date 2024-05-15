@@ -26,7 +26,7 @@ GDK_PIXBUF_MODULE_FILE = ""
 WINIT_X11_SCALE_FACTOR = "1"
 
 [font]
-size = 16.0
+size = 12.0
 
 [font.normal]
 family = "RobotoMono"

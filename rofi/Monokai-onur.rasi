@@ -6,6 +6,7 @@
 
 configuration {
     show-icons: true;
+    font: "Roboto 10";
 }
 
 * {
@@ -44,6 +45,7 @@ configuration {
     border:           1;
     padding:          10;
     width:            20%;
+    height:           33%;
     border-radius:    12;
 }
 #mainbox {
@@ -69,6 +71,10 @@ configuration {
 #element {
     border:  0;
     padding: 10px ;
+}
+#element-text {
+    background-color: inherit;
+    text-color:       inherit;
 }
 #element.normal.normal {
     background-color: @normal-background;

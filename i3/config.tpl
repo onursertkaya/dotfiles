@@ -150,6 +150,7 @@ mode $move_mode {
     bindsym Escape mode "default"
 }
 
+
 bindsym $mod+c mode $control_mode
 bindsym $mod+s mode $layout_mode
 bindsym $mod+r mode $resize_mode
@@ -209,25 +210,16 @@ client.placeholder      #background   #cc2458      $text_urgent
 client.background       #00ff00
 
 
-# KB shortcuts
-
 # startup
-# exec --no-startup-id "wrappers.bash homescreen"
 exec --no-startup-id "wrappers.bash kbd_init"
-exec --no-startup-id "wrappers.bash compton_cc"
+exec --no-startup-id "wrappers.bash compositor_cc"
 exec --no-startup-id "wrappers.bash dunst_cc"
-
 exec --no-startup-id "feh --bg-scale ~/Downloads/wp.jpg"
 exec --no-startup-id "pasystray"
 exec --no-startup-id "blueman-applet"
 
 
-# floating windows
-#for_window [class="Gedit"] floating enable
-#for_window [class="firefox"] floating enable
-#for_window [class="Gnome-terminal"] floating enable
-#for_window [class="Alacritty"] floating enable
-
+# specific workspaces
 assign [class="Alacritty"] number $ws10
 
 # ws1, ws2, ws5
@@ -239,6 +231,4 @@ assign [class="Microsoft Teams - Preview"] number $ws5
 for_window [class="Spotify"] move to workspace $ws4
 for_window [class="Pulseeffects"] move to workspace $ws4
 for_window [workspace=$ws4] layout tabbed
-
-
 

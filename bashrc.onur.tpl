@@ -2,40 +2,46 @@
 
 CONF_ROOT=
 
-# Enable CTRL+S for forward search
+IS_UBUNTU=$([[ -n $(uname -a | grep '[Uu]buntu') ]] && echo true || echo false)
+
+export PATH=$PATH:~/.local/bin
 stty -ixon
 
-# Enable fzf key bindings
-source /usr/share/doc/fzf/examples/key-bindings.bash
+source $(find /usr/share -type f -name key-bindings.bash 2>/dev/null | grep fzf)
 
-# Enable longer HIST
 HISTSIZE=10000
 HISTFILESIZE=10000
+HISTCONTROL=ignoreboth:erasedups
 
-# Prompt
-PS1='[$(date +'%T')] ${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\w\[\033[00m\]\[\033[01;36m\]$(parse_git_branch)\[\033[00m\]\n\[\033[01;33m\]> \[\033[00m\] '
+if [[ $IS_UBUNTU = true ]]; then
+    PS1='[$(date +'%T')] ${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\w\[\033[00m\]\[\033[01;36m\]$(parse_git_branch)\[\033[00m\]\n\[\033[01;33m\]> \[\033[00m\] '
+else
+    GREEN="\[$(tput setaf 2)\]"
+    BOLD="\[$(tput bold)\]"
+    RESET="\[$(tput sgr0)\]"
+    PS1="[ ${GREEN}${BOLD}\w${RESET} ] "
+fi
 
-# Replacement programs
 alias vim="nvim.appimage -u ${CONF_ROOT}/nvim/init.vim";
 
-# Convenient shortcuts
 alias pyh="PYTHONPATH=. python3"
-
 alias fao='vim $(fzf)'
+alias t='date +'"'"'%T'"'"
 alias fac='fzf | copy'
-
 alias copy='xclip -selection clipboard'
 alias c='clear'
 alias clar='clear'
 alias cler='clear'
-
 alias ku='minikube kubectl --';
 
 alias swed='setxkbmap -layout se';
 alias engl='setxkbmap -layout us';
 alias turk='setxkbmap -layout tr';
 alias shrug="echo ¯\\\_\(ツ\)_/¯";
-alias t='date +'"'"'%T'"'"
+
+alias ls='ls --color=auto'
+alias ll='ls -al'
+alias grep='grep --color=auto'
 
 alias ga='git commit -a --amend'
 alias gt='git log --all --graph --pretty="format:%C(yellow)%h%Creset [%><(18,trunc)%Cblue%an%Creset] %s %C(auto)%d%Creset"';
@@ -49,6 +55,7 @@ alias gl='git log'
 
 alias docker_img='docker images --format="table {{.Repository}}:{{.Tag}}"'
 alias docker_img_sorted='docker images --format="table {{.Size}}\t{{.Repository}}:{{.Tag}}" | sort -hr'
+
 function docker_here {
     img_name=$1;
     shift;
@@ -62,6 +69,7 @@ function docker_here {
         $rest \
             $img /bin/bash;
 }
+
 function docker_img_clean {
     picked_img_size_name=$(docker_img_sorted | fzf);
     if [ $? == 0 ]; then
@@ -97,10 +105,6 @@ with open('$1', 'rb') as src, open('$2', 'wb') as dst:
 }
 
 # Functions
-function rename_window() {
-    xdotool set_window --name "$1" $(xdotool getactivewindow)
-}
-
 function parse_git_branch() {
      git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 

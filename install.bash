@@ -1,6 +1,7 @@
 #!/bin/bash
 set -eux
 
+IS_UBUNTU=$([[ -n $(uname -a | grep '[Uu]buntu') ]] && echo true || echo false)
 CONF_ROOT=${PWD}
 
 replace_conf_root() {
@@ -14,13 +15,13 @@ replace_conf_root() {
 # Configure and copy wrappers script
 wrappers_path="${CONF_ROOT}/wrappers.bash"
 replace_conf_root $wrappers_path
+mkdir -p ~/.local/bin
 cp $wrappers_path ~/.local/bin
 
 
 # Configure bashrc and add source statement
 bashrc_onur_path="${CONF_ROOT}/bashrc.onur"
 replace_conf_root $bashrc_onur_path
-
 bashrc_path="${HOME}/.bashrc"
 if [[ -z $(grep $bashrc_onur_path $bashrc_path) ]]; then
     echo "source ${bashrc_onur_path}" >> $bashrc_path
@@ -34,9 +35,17 @@ cp i3/{config,i3status.conf} ~/.config/i3
 
 
 # Configure rofi
-rofi_conf_path="${CONF_ROOT}/rofi/config"
-rofi_conf_tpl_path="${rofi_conf_path}.tpl"
-rofi_theme_path="${CONF_ROOT}/rofi/Monokai-onur.rasi"
-cp $rofi_conf_tpl_path $rofi_conf_path
-echo "rofi.theme: ${rofi_theme_path}" >> ${rofi_conf_path}
+rofi_tpl="${CONF_ROOT}/rofi/config.arch"
+if [ $IS_UBUNTU = true ]; then
+    rofi_tpl="${CONF_ROOT}/rofi/config.ubuntu"
+fi
 
+rofi_theme="${CONF_ROOT}/rofi/Monokai-onur.rasi"
+rofi_target="${CONF_ROOT}/rofi/config"
+
+cp $rofi_tpl $rofi_target
+if [ $IS_UBUNTU = true ]; then
+    echo "rofi.theme: ${rofi_theme}" >> ${rofi_target}
+else
+    echo '@theme' '"'${rofi_theme}'"' >> ${rofi_target}
+fi

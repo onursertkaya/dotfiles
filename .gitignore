@@ -1,6 +1,8 @@
+__pycache__/
+.mypy_cache
+
 # Ignore created files.
 rofi/config
 i3/config
 wrappers.bash
 bashrc.onur
-.mypy_cache
