@@ -101,8 +101,8 @@ bindsym $mod+Ctrl+1 exec "wrappers.bash noscreen"
 bindsym $mod+Ctrl+2 exec "wrappers.bash homescreen"
 
 bindsym Print exec "wrappers.bash shot"
-bindsym F10 exec "wrappers.bash pass_s"
-bindsym F9 exec "wrappers.bash user_s"
+bindsym F10 exec "pass pass_s"
+bindsym F9 exec "pass user_s"
 
 # modes
 set $control_mode "i3 control [ e | c | r ]"

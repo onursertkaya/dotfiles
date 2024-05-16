@@ -1,12 +1,20 @@
 #!/bin/bash
 
-CONF_ROOT=
 
-IS_UBUNTU=$([[ -n $(uname -a | grep '[Uu]buntu') ]] && echo true || echo false)
+source ~/.conf_root
 
-export PATH=$PATH:~/.local/bin
+__pathappend() {
+  for ARG in "$@"
+  do
+    if [ -d "$ARG" ] && [[ ":$PATH:" != *":$ARG:"* ]]; then
+        PATH="${PATH:+"$PATH:"}$ARG"
+    fi
+  done
+}
+__pathappend "~/.local/bin" "/usr/local/go"
+export PATH
+
 stty -ixon
-
 source $(find /usr/share -type f -name key-bindings.bash 2>/dev/null | grep fzf)
 
 HISTSIZE=10000

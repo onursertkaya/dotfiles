@@ -3,14 +3,13 @@
 LAPTOP_SCREEN="DP-4"
 EXTERNAL_SCREEN="HDMI-0"
 
-CONF_ROOT=
-ALACRITTY_BIN=$CONF_ROOT/../tools/alacritty/target/release/alacritty
+source ~/.conf_root
 
 # Wrapping commands for startup apps. *_cc suffix is for ===============
 # "custom config." =====================================================
 
 alacritty_cc() {
-    $ALACRITTY_BIN --config-file "${CONF_ROOT}/alacritty.toml"
+    $CONF_ROOT/../tools/alacritty/target/release/alacritty --config-file "${CONF_ROOT}/alacritty.toml"
 }
 
 compositor_cc() {
@@ -158,18 +157,6 @@ system_hibernate() {
 
 system_shutdown() {
     systemctl poweroff
-}
-
-pass_s() {
-  bash ~/.pass
-}
-
-user_s() {
-  bash ~/.user
-}
-
-pass_a() {
-  bash ~/.pass_a
 }
 
 eval ${1}

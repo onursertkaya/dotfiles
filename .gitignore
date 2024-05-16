@@ -4,5 +4,3 @@ __pycache__/
 # Ignore created files.
 rofi/config
 i3/config
-wrappers.bash
-bashrc.onur

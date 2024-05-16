@@ -2,37 +2,31 @@
 set -eux
 
 IS_UBUNTU=$([[ -n $(uname -a | grep '[Uu]buntu') ]] && echo true || echo false)
-CONF_ROOT=${PWD}
+CONF_ROOT=${PWD}  # assuming this file is called with make
 
-replace_conf_root() {
-    target_file=$1
-    tpl_file="${target_file}.tpl"
-    cp $tpl_file $target_file
-    sed -i "s|CONF_ROOT=|CONF_ROOT=${CONF_ROOT}|g" $target_file
+append_to_file() {
+    file=$1;
+    statement=$2;
+    if [[ -z $(grep "$statement" $file) ]]; then
+        echo $statement >> $file;
+    fi
 }
 
+conf_root_path="${HOME}/.conf_root"
+append_to_file $conf_root_path "export CONF_ROOT=${CONF_ROOT}";
+append_to_file $conf_root_path "export IS_UBUNTU=${IS_UBUNTU}";
 
-# Configure and copy wrappers script
-wrappers_path="${CONF_ROOT}/wrappers.bash"
-replace_conf_root $wrappers_path
-mkdir -p ~/.local/bin
-cp $wrappers_path ~/.local/bin
-
-
-# Configure bashrc and add source statement
-bashrc_onur_path="${CONF_ROOT}/bashrc.onur"
-replace_conf_root $bashrc_onur_path
 bashrc_path="${HOME}/.bashrc"
-if [[ -z $(grep $bashrc_onur_path $bashrc_path) ]]; then
-    echo "source ${bashrc_onur_path}" >> $bashrc_path
-fi
+append_to_file $bashrc_path "source $conf_root_path"
+append_to_file $bashrc_path "source ${CONF_ROOT}/bashrc.onur"
 
+mkdir -p ~/.local/bin
+cp "${CONF_ROOT}/wrappers.bash" ~/.local/bin
 
 # Configure and copy i3
 python3 i3_configure.py
 mkdir -p ~/.config/i3
 cp i3/{config,i3status.conf} ~/.config/i3
-
 
 # Configure rofi
 rofi_tpl="${CONF_ROOT}/rofi/config.arch"
