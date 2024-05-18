@@ -33,7 +33,7 @@ function M.maybe_pylint_args()
 end
 
 function M.yank_py_import_for_current_file_path()
-    local filepath = vim.fn.expand("%")
+    local filepath = util.current_file_path()
     if not util.endswith(filepath, ".py") then
         return
     end

@@ -125,16 +125,6 @@ local function insert_signature_help()
     util.feedkeys("<Esc>%f,i")
 end
 
-local function insert_completion_cb(key)
-    return function()
-        if is_pum_visible() then
-            util.feedkeys(key)
-        else
-            util.feedkeys(key .. "<C-n>")
-        end
-    end
-end
-
 local M = {}
 
 local function language_specific_triggers(filetype, opts)
@@ -164,13 +154,6 @@ local function generic_triggers(opts)
     end
 end
 
-local function insert_completion_triggers(opts)
-    -- set insert completion triggers
-    for p in ("abcdefghijklmnopqrstwxvyz"):gmatch(".") do
-        vim.keymap.set("i", p, insert_completion_cb(p), opts)
-    end
-end
-
 local function signature_help_triggers(opts)
     -- define signature help triggers
     local triggers = {
@@ -195,7 +178,6 @@ local function language_specific_functionality(filetype, opts)
 end
 
 function M.setup(opts)
-    insert_completion_triggers(opts)
     generic_triggers(opts)
     signature_help_triggers(opts)
 

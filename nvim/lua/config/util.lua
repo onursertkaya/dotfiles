@@ -21,8 +21,12 @@ local function set_clipboard(text)
     vim.fn.setreg('+', text) -- set clipboard
 end
 
+function M.current_file_path()
+    return vim.vn.expand("%")
+end
+
 function M.yank_current_file_path()
-    local curr_buf_path = vim.fn.expand("%") .. "\n"
+    local curr_buf_path = M.current_file_path() .. "\n"
     set_clipboard(curr_buf_path)
 end
 

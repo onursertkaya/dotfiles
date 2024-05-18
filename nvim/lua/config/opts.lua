@@ -41,6 +41,9 @@ o.switchbuf:append("usetab")
 -- insert mode eagerly, wait for input.
 o.completeopt = "menu,menuone,noinsert"
 
+-- default is .wbut, disable (w)indow and (t)ags
+o.complete = ".,b,u"
+
 -- default theme & settings
 vim.cmd("filetype indent plugin on")
 vim.cmd("colorscheme kanagawa")
