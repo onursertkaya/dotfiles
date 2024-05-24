@@ -172,7 +172,7 @@ bar {
     status_command i3status --config ~/.config/i3/i3status.conf
     tray_output primary
     strip_workspace_numbers yes
-    font pango:Roboto mono 10
+    font pango:Roboto mono 9
     separator_symbol "//"
     position bottom
 

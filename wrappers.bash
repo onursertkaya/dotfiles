@@ -90,17 +90,17 @@ brightness_down() {
     xrandr --output ${LAPTOP_SCREEN} --brightness $decreased
 }
 
-function rename_window() {
+rename_window() {
     xdotool set_window --name "$1" $(xdotool getactivewindow)
 }
 
-function shot() {
+shot() {
     FILENAME=$(date +'%F_%H-%M-%S');
     if [[ $1 != '' ]]; then
         FILENAME=$1
     fi
     mkdir -p  ~/Pictures/ss;
-    scrot -s --file "${HOME}/Pictures/ss/${FILENAME}.png";
+    scrot -s "${HOME}/Pictures/ss/${FILENAME}.png";
 }
 
 screen_turn_off() {

@@ -22,7 +22,7 @@ local function set_clipboard(text)
 end
 
 function M.current_file_path()
-    return vim.vn.expand("%")
+    return vim.fn.expand("%")
 end
 
 function M.yank_current_file_path()
@@ -83,7 +83,7 @@ function M.open_cword_in_external()
     -- not perfect but does the job
 
     local function has_http(u)
-        return (u:find("^https?://.*") ~= nil)
+        return (u:find("^http[s]?://.*") ~= nil)
     end
 
     local function is_url(u)
