@@ -40,19 +40,34 @@ rofi_window() {
 }
 
 rofi_control() {
-    pick=$(printf '%s\n' \
-        system_hibernate \
-        system_sleep \
-        system_shutdown \
-        screen_turn_off \
-        lock \
-        kbd_toggle \
-        kbd_init \
-        shot \
-        homescreen \
-        noscreen \
-        | rofi -config "${CONF_ROOT}/rofi/config" -dmenu -p 'Control')
-    eval ${pick}
+    declare -A actions=( \
+        ["Hibernate"]="system_hibernate" \
+        ["Sleep"]="system_sleep" \
+        ["Shutdown"]="system_shutdown" \
+        ["Lock"]="lock" \
+        ["Toggle keyboard"]="kbd_toggle" \
+        ["Init keyboard"]="kbd_init" \
+        ["Screenshot"]="shot" \
+        ["Turn off the screen"]="screen_turn_off" \
+        ["Switch to external screen"]="homescreen" \
+        ["Switch to main screen"]="noscreen" \
+    );
+    actions_with_icons=( \
+        '\tHibernate' \
+        '\tSleep' \
+        '\tShutdown' \
+        '\tLock' \
+        '\tToggle keyboard' \
+        '\tInit keyboard' \
+        '\tScreenshot' \
+        '\tTurn off the screen' \
+        '\tSwitch to external screen' \
+        '\tSwitch to main screen' \
+    );
+    pick_str=$(printf '%b\n' "${actions_with_icons[@]}" | \
+        rofi -config "${CONF_ROOT}/rofi/config" -dmenu -p 'Control' -i);
+    picked_action=$(echo $pick_str | cut -f 2- -d' ');
+    eval ${actions[$picked_action]}
 }
 
 # Custom commands ======================================================

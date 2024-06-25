@@ -123,9 +123,24 @@ function parse_git_branch() {
      #git branch 2> /dev/null | grep -o -P '(?<=\*\s)\w+'
 }
 
-function top_consumer() {
-    top_consumer=$(ps -eo cmd,%mem,%cpu --sort=-%cpu | sed -n '2 p' | cut -d ' ' -f 1-3)
-    echo $top_consumer
+function top_cpu() {
+    ps -eo comm,%cpu,%mem --sort=-%cpu | head
+}
+
+function top_mem() {
+    ps -eo comm,%cpu,%mem --sort=-%mem | head
+}
+
+function network_usage() {
+    rx_file=/sys/class/net/wlp0s20f3/statistics/rx_bytes
+    while :
+    do
+        PREV=$(cat $rx_file);
+        sleep 1;
+        CURR=$(cat $rx_file);
+        DIFF=$(( (CURR-PREV) / 1024));
+        printf "$(numfmt --padding=8 $DIFF) kB/s"\\r;
+    done
 }
 
 function get_duplicate_lines() {
@@ -295,39 +310,6 @@ function i3_toggle() {
 function i3_get_focused_ws() {
   i3-msg -t get_workspaces | jq '.[] | select(.focused==true).name' | cut -d"\"" -f2
 }
-
-function network_usage() {
-  while true;
-  do
-    INTERVAL=1
-    OLD_DOWNLOAD_BYTES=$(ifconfig -a | grep -A 10 enp | grep 'RX packets' | xargs | cut -d ' ' -f5)
-    OLD_UPLOAD_BYTES=$(ifconfig -a | grep -A 10 enp | grep 'TX packets' | xargs | cut -d ' ' -f5)
-    sleep $INTERVAL
-
-    CUR_DOWNLOAD_BYTES=$(ifconfig -a | grep -A 10 enp | grep 'RX packets' | xargs | cut -d ' ' -f5)
-    CUR_UPLOAD_BYTES=$(ifconfig -a | grep -A 10 enp | grep 'TX packets' | xargs | cut -d ' ' -f5)
-
-    DOWN_DIFF_BYTES=$(($CUR_DOWNLOAD_BYTES - $OLD_DOWNLOAD_BYTES))
-    DOWN_DIFF_BYTES=$(($DOWN_DIFF_BYTES / $INTERVAL))
-
-    UP_DIFF_BYTES=$(($CUR_UPLOAD_BYTES - $OLD_UPLOAD_BYTES))
-    UP_DIFF_BYTES=$(($UP_DIFF_BYTES / $INTERVAL))
-
-    DOWN_DIFF_FRIENDLY=$(numfmt --to iec --format "%8.4f" $DOWN_DIFF_BYTES)
-    UP_DIFF_FRIENDLY=$(numfmt --to iec --format "%8.4f" $UP_DIFF_BYTES)
-
-    CURR_DATE=$(date +'%T')
-    echo -n "[${CURR_DATE}] d:${DOWN_DIFF_FRIENDLY}B/s  ||  u:${UP_DIFF_FRIENDLY}B/s" $'\r'
-  done
-}
-
-
-
-
-
-
-
-
 
 function quake_me() {
   SCREEN_ID=$(i3-msg -t get_workspaces | jq '.[] | select(.focused==true).output')
