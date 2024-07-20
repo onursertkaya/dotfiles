@@ -65,32 +65,20 @@ local function is_pum_visible()
     return vim.fn.pumvisible() == 1
 end
 
-local function omnifunc_invocation_cb(key, invoke_once)
+local function make_clangd_header_source_jumper()
     return function()
-        local identifier = is_current_cursor_word_an_identifier()
-
-        local feed_omni = ""
-        if (identifier and (not invoke_once or is_pum_visible())) then
-            feed_omni = "<C-x><C-o>"
-        end
-        util.feedkeys(key .. feed_omni)
+        vim.cmd("ClangdSwitchSourceHeader")
     end
 end
 
-local function signature_help_cb(key, invoke_while_pumvisible)
+local function make_signature_helper(key, invoke_only_while_pumvisible)
     return function()
         util.feedkeys(key)
         local identifier = is_current_cursor_an_argument() or is_current_cursor_word_an_identifier()
 
-        if (identifier and (not invoke_while_pumvisible or not is_pum_visible())) then
+        if (identifier and (not invoke_only_while_pumvisible or not is_pum_visible())) then
             vim.schedule(vim.lsp.buf.signature_help)
         end
-    end
-end
-
-local function clangd_header_source_jump_cb()
-    return function()
-        vim.cmd("ClangdSwitchSourceHeader")
     end
 end
 
@@ -125,7 +113,113 @@ local function insert_signature_help()
     util.feedkeys("<Esc>%f,i")
 end
 
-local M = {}
+local function get_lsp_completions()
+    local params = vim.lsp.util.make_position_params()
+    local results = vim.lsp.buf_request_sync(0, 'textDocument/completion', params, 1000)
+    local items = {}
+
+    if results then
+        for _, res in pairs(results) do
+            if res.result then
+                local item = vim.lsp.util.extract_completion_items(res.result)
+                vim.list_extend(items, item)
+            end
+        end
+    end
+
+    return items
+end
+
+local function format_completions(items, line_width, replace_cword)
+    local completion_item_kind = {
+        "Text",
+        "Method",
+        "Function",
+        "Constructor",
+        "Field",
+        "Variable",
+        "Class",
+        "Interface",
+        "Module",
+        "Property",
+        "Unit",
+        "Value",
+        "Enum",
+        "Keyword",
+        "Snippet",
+        "Color",
+        "File",
+        "Reference",
+        "Folder",
+        "EnumMember",
+        "Constant",
+        "Struct",
+        "Event",
+        "Operator",
+        "TypeParameter"
+    }
+    local make_line = function(item)
+        local label = item.label
+        local kind = completion_item_kind[item.kind]
+        local spaces = string.rep(" ", line_width - (label:len() + kind:len()))
+        return label .. spaces .. kind
+    end
+
+    local telescope_entries = {}
+    local pre_action = replace_cword and "ciw" or "a"
+    for _, item in ipairs(items) do
+        local text = make_line(item)
+        local inserter = function()
+            util.feedkeys(pre_action .. item.insertText)
+        end
+        table.insert(telescope_entries, { text, inserter })
+    end
+    return telescope_entries
+end
+
+local function make_telescope_omni_completion_picker(opts, pre_insert)
+    local line_width = 100
+    local should_replace_cword = pre_insert == nil
+    return function()
+        if not is_current_cursor_word_an_identifier() then
+            -- after = false
+            -- follow = true
+            vim.api.nvim_put({ pre_insert }, "c", false, true)
+            return
+        end
+
+        -- a trigger-token invoked this function, insert it immediately
+        if not should_replace_cword then
+            -- after = true
+            -- follow = true
+            vim.api.nvim_put({ pre_insert }, "c", false, true)
+        end
+
+        local width_offset = 6
+        local final_line_width = line_width + width_offset
+        opts = opts or {}
+
+        local entry_maker = function(entry)
+            return {
+                value = entry,
+                display = entry[1],
+                ordinal = entry[1],
+                cb = entry[2]
+            }
+        end
+
+        require("telescope_util").pick(
+            opts,
+            format_completions(get_lsp_completions(), line_width, should_replace_cword),
+            entry_maker,
+            final_line_width,
+            0.33,
+            "Hint",
+            "Matches",
+            "cursor"
+        )
+    end
+end
 
 local function language_specific_triggers(filetype, opts)
     local language_omnifunc_triggers = { "." }
@@ -136,21 +230,7 @@ local function language_specific_triggers(filetype, opts)
     end
 
     for _, t in ipairs(language_omnifunc_triggers) do
-        vim.keymap.set("i", t, omnifunc_invocation_cb(t, false), opts)
-    end
-end
-
-local function generic_triggers(opts)
-    -- define generic triggers
-    local generic_omnifunc_triggers = {
-        ["<C-space>"] = { "", false },
-        ["<BS>"] = { "<BS>", true }
-    }
-
-    -- set generic triggers
-    for t, feed in pairs(generic_omnifunc_triggers) do
-        local feed_key, once = unpack(feed)
-        vim.keymap.set("i", t, omnifunc_invocation_cb(feed_key, once), opts)
+        vim.keymap.set("i", t, make_telescope_omni_completion_picker(opts, t), opts)
     end
 end
 
@@ -160,12 +240,13 @@ local function signature_help_triggers(opts)
         ["<CR>"] = { true },
         ["("] = { false },
         ["{"] = { false },
-        [","] = { false }
+        [","] = { false },
+        ["<"] = { false },
     }
 
     -- set signature help triggers
     for t, while_pumvisible in pairs(triggers) do
-        vim.keymap.set("i", t, signature_help_cb(t, while_pumvisible), opts)
+        vim.keymap.set("i", t, make_signature_helper(t, while_pumvisible), opts)
     end
 end
 
@@ -173,12 +254,14 @@ local function language_specific_functionality(filetype, opts)
     if filetype == "python" then
         vim.keymap.set("i", "<C-A-s>", insert_signature_help, opts)
     elseif util.item_in(filetype, { "cpp", "cuda" }) then
-        vim.keymap.set("n", "gh", clangd_header_source_jump_cb(), opts)
+        vim.keymap.set("n", "gh", make_clangd_header_source_jumper(), opts)
     end
 end
 
+local M = {}
+
 function M.setup(opts)
-    generic_triggers(opts)
+    vim.keymap.set("i", "<C-space>", make_telescope_omni_completion_picker(opts, nil), opts)
     signature_help_triggers(opts)
 
     local filetype = vim.bo.filetype

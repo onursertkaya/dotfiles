@@ -20,6 +20,7 @@ vim.keymap.set("n", "<leader><leader>", ":noh<enter>")
 vim.keymap.set("n", "<leader><enter>", tls_blt.resume)
 vim.keymap.set("n", "<leader>q", ":qa<enter>")
 vim.keymap.set("n", "<leader>p", "viwP")
+vim.keymap.set("i", "<C-enter>", "<C-n>")
 -- ]
 
 -- pum bindings
@@ -36,7 +37,7 @@ vim.keymap.set("n", "<leader>G", tls_blt.grep_string, {})
 vim.keymap.set("n", "<leader>f", tls_blt.find_files, {})
 local tls_util = require("telescope_util")
 vim.keymap.set("n", "<leader>F", tls_util.telescope_find_directories, {})
-vim.keymap.set("n", "<leader>a", tls_util.telescope_actions_picker_cb("n"), {})
+vim.keymap.set("n", "<leader>a", tls_util.make_telescope_actions_picker("n"), {})
 -- ]
 
 -- distinguish delete and cut
@@ -97,14 +98,14 @@ function M.set_lsp_keymaps(opts)
         return
     end
 
-    local comppylete = require("comppylete")
-    comppylete.setup(opts)
+    require("comppylete").setup(opts)
 
     -- symbol jumps
     vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
 
-    vim.keymap.set("n", "gdv", util.lsp_definition_in_split_cb(), opts)
-    vim.keymap.set("n", "gdt", util.lsp_definition_in_tab_cb(), opts)
+    vim.keymap.set("n", "gdv", util.make_lsp_jump_to_symbol_definition_in_split("vertical"), opts)
+    vim.keymap.set("n", "gds", util.make_lsp_jump_to_symbol_definition_in_split("horizontal"), opts)
+    vim.keymap.set("n", "gdt", util.make_lsp_jump_to_symbol_definition_in_tab(), opts)
     vim.keymap.set("n", "gdd", vim.lsp.buf.definition, opts)
 
     vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)

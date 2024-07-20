@@ -2,7 +2,6 @@
 vim.opt.cmdheight = 0
 
 local telescope = require("telescope")
-local util = require("util")
 local tls_util = require("telescope_util")
 
 telescope.setup {
@@ -10,7 +9,7 @@ telescope.setup {
         find_files = {
             mappings = {
                 i = {
-                    ["<C-f>"] = tls_util.telescope_grep_in_dir_cb()
+                    ["<C-f>"] = tls_util.make_telescope_grep_in_dir_picker()
                 },
             },
         },
@@ -22,7 +21,7 @@ telescope.setup {
             hijack_netrw = true,
             mappings = {
                 ["i"] = {
-                    ["<C-f>"] = tls_util.telescope_grep_in_dir_cb(),
+                    ["<C-f>"] = tls_util.make_telescope_grep_in_dir_picker(),
                     ["<C-space>"] = telescope.extensions.file_browser.actions.goto_cwd,
                     ["<C-t>"] = require("telescope.actions").select_tab,
                 }
@@ -33,12 +32,12 @@ telescope.setup {
 telescope.load_extension("file_browser")
 
 local function rename_no_name(name, _)
-    return util.replace_string_to_cwd(name, "[No Name]")
+    return require("util").replace_string_to_cwd(name, "[No Name]")
 end
 
 local function tabline_format(name, ctx)
     local bufnr = vim.fn.tabpagebuflist(ctx.tabnr)[vim.fn.tabpagewinnr(ctx.tabnr)]
-    if bufnr == util.term_buf then
+    if bufnr == require("termit").term_buf then
         return "⚒"
     else
         return rename_no_name(name)

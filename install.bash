@@ -4,12 +4,12 @@ set -eu
 IS_UBUNTU=$([[ -n $(uname -a | grep '[Uu]buntu') ]] && echo true || echo false)
 CONF_ROOT=${PWD}  # assuming this file is called with make
 
-
-printf '%s\n%s\n%s %s\n' \
-    "XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR}" \
-    "DISPLAY=${DISPLAY}" \
-    '0,15,30,45 * * * *' \
-    "${CONF_ROOT}/break.bash" | crontab -
+# commented out since it didn't work much...
+# printf '%s\n%s\n%s %s\n' \
+#     "XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR}" \
+#     "DISPLAY=${DISPLAY}" \
+#     '0,15,30,45 * * * *' \
+#     "${CONF_ROOT}/break.bash" | crontab -
 
 append_to_file() {
     file=$1;

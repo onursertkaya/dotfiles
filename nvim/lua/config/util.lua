@@ -16,7 +16,7 @@ function M.log(something)
     end
 end
 
-local function set_clipboard(text)
+function M.set_clipboard(text)
     vim.fn.setreg('', text)  -- set the default register
     vim.fn.setreg('+', text) -- set clipboard
 end
@@ -27,7 +27,7 @@ end
 
 function M.yank_current_file_path()
     local curr_buf_path = M.current_file_path() .. "\n"
-    set_clipboard(curr_buf_path)
+    M.set_clipboard(curr_buf_path)
 end
 
 function M.yank_word_under_cursor_to_register_interactive()
@@ -65,14 +65,16 @@ function M.replace_word_under_cursor_in_current_buffer()
 end
 
 -- LSP
-function M.lsp_definition_in_split_cb()
+function M.make_lsp_jump_to_symbol_definition_in_split(split_type)
+    assert(M.item_in(split_type, { "horizontal", "vertical" }))
+    local cmd = split_type == "vertical" and "vs" or "sp"
     return function(o)
-        vim.cmd("vs")
+        vim.cmd(cmd)
         vim.lsp.buf.definition(o)
     end
 end
 
-function M.lsp_definition_in_tab_cb()
+function M.make_lsp_jump_to_symbol_definition_in_tab()
     return function(o)
         vim.cmd("tab split")
         vim.lsp.buf.definition(o)
@@ -93,7 +95,7 @@ function M.open_cword_in_external()
         end
 
         -- Nx(letters.) + (org/com/net) where N >= 1
-        for _, ext in ipairs({"org", "com", "net"}) do
+        for _, ext in ipairs({ "org", "com", "net" }) do
             if u:find("(%a+%.+)" .. ext) ~= nil then
                 return true
             end
