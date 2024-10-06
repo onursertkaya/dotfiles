@@ -1,3 +1,8 @@
+" todo
+" git blame action in telescope preview
+" toggle line/visual comment, language-aware
+" harden autocomplete
+
 call plug#begin('~/.nvim_plugged')
 
 " lsp & treesitter

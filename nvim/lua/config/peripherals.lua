@@ -38,13 +38,17 @@ end
 local function tabline_format(name, ctx)
     local bufnr = vim.fn.tabpagebuflist(ctx.tabnr)[vim.fn.tabpagewinnr(ctx.tabnr)]
     if bufnr == require("termit").term_buf then
-        return "⚒"
+        return " ⚒  "
     else
         return rename_no_name(name)
     end
 end
 
 require("lualine").setup {
+    options = {
+        section_separators = "",
+        component_separators = "",
+    },
     sections = {
         lualine_c = {
             {

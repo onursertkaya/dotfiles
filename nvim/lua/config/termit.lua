@@ -19,6 +19,7 @@ function M.termit_global()
     if M.term_buf == nil then
         M.term_buf = vim.api.nvim_create_buf(true, false)
         vim.cmd(string.format("$tabnew | buffer %s | terminal", M.term_buf))
+        vim.cmd("file termit_main")
     else
         if is_visible_in_tab() then
             -- sbuffer works due to o.switchbuf:append("usetab"), then move to rightmost
@@ -31,7 +32,11 @@ function M.termit_global()
 end
 
 function M.termit_new()
-    vim.cmd("tabnew | terminal")
+    vim.ui.input({ prompt = "Terminal name: " }, function(term_name)
+        vim.cmd("tabnew | terminal")
+        vim.cmd("file " .. term_name)
+    end)
+
 end
 
 return M

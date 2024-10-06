@@ -44,6 +44,7 @@ rofi_control() {
         ["Hibernate"]="system_hibernate" \
         ["Sleep"]="system_sleep" \
         ["Shutdown"]="system_shutdown" \
+        ["Reboot"]="system_reboot" \
         ["Lock"]="lock" \
         ["Toggle keyboard"]="kbd_toggle" \
         ["Init keyboard"]="kbd_init" \
@@ -53,9 +54,10 @@ rofi_control() {
         ["Switch to main screen"]="noscreen" \
     );
     actions_with_icons=( \
-        '\tHibernate' \
+        '❄\tHibernate' \
         '\tSleep' \
         '\tShutdown' \
+        '↺\tReboot' \
         '\tLock' \
         '\tToggle keyboard' \
         '\tInit keyboard' \
@@ -65,7 +67,7 @@ rofi_control() {
         '\tSwitch to main screen' \
     );
     pick_str=$(printf '%b\n' "${actions_with_icons[@]}" | \
-        rofi -config "${CONF_ROOT}/rofi/config" -dmenu -p 'Control' -i);
+        rofi -disable-history -config "${CONF_ROOT}/rofi/config" -dmenu -p 'Control' -i);
     picked_action=$(echo $pick_str | cut -f 2- -d' ');
     eval ${actions[$picked_action]}
 }
@@ -116,6 +118,10 @@ shot() {
     fi
     mkdir -p  ~/Pictures/ss;
     scrot -s "${HOME}/Pictures/ss/${FILENAME}.png";
+}
+
+beep() {
+    speaker-test -t sine -f 1000 -l 1 & sleep 1 && kill -9 $!
 }
 
 screen_turn_off() {
@@ -174,4 +180,7 @@ system_shutdown() {
     systemctl poweroff
 }
 
+system_reboot() {
+    systemctl reboot
+}
 eval ${1}

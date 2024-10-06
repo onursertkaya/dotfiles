@@ -208,52 +208,85 @@ local function make_telescope_omni_completion_picker(opts, pre_insert)
             }
         end
 
-        require("telescope_util").pick(
-            opts,
-            format_completions(get_lsp_completions(), line_width, should_replace_cword),
-            entry_maker,
-            final_line_width,
-            0.33,
-            "Hint",
-            "Matches",
-            "cursor"
-        )
+        local maybe_completions = get_lsp_completions()
+        if next(maybe_completions) ~= nil then
+            require("telescope_util").pick(
+                opts,
+                format_completions(maybe_completions, line_width, should_replace_cword),
+                entry_maker,
+                final_line_width,
+                0.33,
+                "Hint",
+                "Matches",
+                "cursor"
+            )
+        end
     end
 end
 
-local function language_specific_triggers(filetype, opts)
-    local language_omnifunc_triggers = { "." }
-    if util.item_in(filetype, { "cpp", "cuda" }) then
-        for _, t in ipairs({ "::", "->" }) do
-            table.insert(language_omnifunc_triggers, t)
+local function is_cpp_file(filetype)
+    return util.item_in(filetype, { "cpp", "cuda" })
+end
+
+local function set_signature_help_triggers(filetype, opts)
+    -- todo: keep PUM open until the matching character >}) is pressed.
+    local height = 45
+    local width = 120
+    vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+        vim.lsp.handlers.signature_help, {
+            relative = "cursor",
+            border = "rounded",
+            height = height,
+            width = width,
+            fixed = true,
+        }
+    )
+
+    local common_triggers = {
+        ["<CR>"] = { true },
+        ["("] = { false },
+        [","] = { false },
+    }
+
+    local set_triggers = function(trigger_map)
+        for t, while_pumvisible in pairs(trigger_map) do
+            vim.keymap.set("i", t, make_signature_helper(t, while_pumvisible), opts)
         end
     end
 
-    for _, t in ipairs(language_omnifunc_triggers) do
-        vim.keymap.set("i", t, make_telescope_omni_completion_picker(opts, t), opts)
-    end
-end
+    set_triggers(common_triggers)
 
-local function signature_help_triggers(opts)
-    -- define signature help triggers
-    local triggers = {
-        ["<CR>"] = { true },
-        ["("] = { false },
+    local cpp_triggers = {
         ["{"] = { false },
-        [","] = { false },
         ["<"] = { false },
     }
-
-    -- set signature help triggers
-    for t, while_pumvisible in pairs(triggers) do
-        vim.keymap.set("i", t, make_signature_helper(t, while_pumvisible), opts)
+    if is_cpp_file(filetype) then
+        set_triggers(cpp_triggers)
     end
 end
 
-local function language_specific_functionality(filetype, opts)
+local function set_completion_triggers(filetype, opts)
+    -- do not trigger with <Alt + .>
+    vim.keymap.set("i", "<A-.>", function() vim.api.nvim_put({ "." }, "c", false, true) end, opts)
+
+    -- explicitly trigger with Ctrl + space on symbols
+    vim.keymap.set("i", "<C-space>", make_telescope_omni_completion_picker(opts, nil), opts)
+
+    -- trigger with . on symbols
+    vim.keymap.set("i", ".", make_telescope_omni_completion_picker(opts, "."), opts)
+
+    -- trigger with specific symbols
+    if is_cpp_file(filetype) then
+        for _, t in ipairs({ "::", "->" }) do
+            vim.keymap.set("i", t, make_telescope_omni_completion_picker(opts, t), opts)
+        end
+    end
+end
+
+local function set_language_specific_functionality(filetype, opts)
     if filetype == "python" then
         vim.keymap.set("i", "<C-A-s>", insert_signature_help, opts)
-    elseif util.item_in(filetype, { "cpp", "cuda" }) then
+    elseif is_cpp_file(filetype) then
         vim.keymap.set("n", "gh", make_clangd_header_source_jumper(), opts)
     end
 end
@@ -261,12 +294,11 @@ end
 local M = {}
 
 function M.setup(opts)
-    vim.keymap.set("i", "<C-space>", make_telescope_omni_completion_picker(opts, nil), opts)
-    signature_help_triggers(opts)
+    set_signature_help_triggers(opts)
 
     local filetype = vim.bo.filetype
-    language_specific_triggers(filetype, opts)
-    language_specific_functionality(filetype, opts)
+    set_completion_triggers(filetype, opts)
+    set_language_specific_functionality(filetype, opts)
 end
 
 return M

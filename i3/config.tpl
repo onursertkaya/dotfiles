@@ -118,7 +118,6 @@ set $layout_mode "layout [ s | t | space | h | v ]"
 mode $layout_mode {
     bindsym s layout stacking
     bindsym t layout tabbed
-    bindsym space layout toggle split
     bindsym h split h
     bindsym v split v
 
@@ -170,9 +169,10 @@ set $text_urgent #ffaacc
 # bar
 bar {
     status_command i3status --config ~/.config/i3/i3status.conf
+    #status_command i3blocks -c ~/conf/dotfiles/i3/i3blocks.ini
     tray_output primary
     strip_workspace_numbers yes
-    font pango:Roboto mono 9
+    font pango:Roboto mono 11
     separator_symbol "//"
     position bottom
 

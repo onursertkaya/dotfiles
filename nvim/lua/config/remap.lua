@@ -25,13 +25,13 @@ vim.keymap.set("i", "<C-enter>", "<C-n>")
 
 -- pum bindings
 -- [
-vim.keymap.set("n", "<leader>b", tls_blt.buffers, {})
+vim.keymap.set("n", "<leader>b", function() tls_blt.buffers({only_cwd = true}) end, {})  -- prevent NoName buffers
 vim.keymap.set("n", "<leader>r", tls_blt.registers, {})
 vim.keymap.set("n", "<leader>/", tls_blt.search_history, {})
 vim.keymap.set("n", "<leader>:", tls_blt.command_history, {})
 vim.keymap.set("n", "<leader>m", tls_blt.marks, {})
 vim.keymap.set("n", "<leader>D", ":Telescope file_browser<enter>")
-vim.keymap.set("n", "<leader>d", ":Telescope file_browser path=%:p:h select_buffer=true<CR>")
+vim.keymap.set("n", "<leader>d", ":Telescope file_browser path=%:p:h select_buffer=true<enter>")
 vim.keymap.set("n", "<leader>g", tls_blt.live_grep, {})
 vim.keymap.set("n", "<leader>G", tls_blt.grep_string, {})
 vim.keymap.set("n", "<leader>f", tls_blt.find_files, {})
@@ -42,6 +42,9 @@ vim.keymap.set("n", "<leader>a", tls_util.make_telescope_actions_picker("n"), {}
 
 -- distinguish delete and cut
 vim.keymap.set("v", "d", '"_d')
+
+-- replace in visual mode
+vim.keymap.set("v", "r", ":s//")
 
 -- open file in split by default, in tab if requested
 vim.keymap.set("n", "gf", ":vsplit<enter> gf")
@@ -64,25 +67,24 @@ vim.keymap.set("i", "<C-l>", "<Right>")
 --   current buffer navigation, CTRL
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "{", "{zz")
-vim.keymap.set("n", "}", "}zz")
 vim.keymap.set("n", "<C-j>", "j<C-e>")
 vim.keymap.set("n", "<C-k>", "k<C-y>")
 
 --   buffer management, ALT
 vim.keymap.set("n", "<A-q>", ":q<enter>")
-vim.keymap.set("n", "<A-S-q>", ":bd<enter>")
 vim.keymap.set("n", "<A-w>", ":w<enter>")
+vim.keymap.set("n", "<A-S-q>", ":bd<enter>")
+vim.keymap.set("n", "<A-S-x>", "<C-w>x") -- exchange current with next
+vim.keymap.set("n", "<A-S-t>", "<C-w>T") -- send current to a newtab
 
 --   split navigation, ALT
 vim.keymap.set("n", "<A-v>", ":vsplit<enter>") -- open split to right
+vim.keymap.set("n", "<A-t>", ":tabnew<enter>") -- open tab to right
 vim.keymap.set("n", "<A-e>", "<C-W>=<enter>")  -- equalize
 vim.keymap.set("n", "<A-h>", "<C-w>h")
 vim.keymap.set("n", "<A-j>", "<C-w>j")
 vim.keymap.set("n", "<A-k>", "<C-w>k")
 vim.keymap.set("n", "<A-l>", "<C-w>l")
-vim.keymap.set("n", "<A-x>", "<C-w>x") -- exchange current with next
-vim.keymap.set("n", "<A-t>", "<C-w>T") -- send current to a newtab
 
 --   tab navigation CTRL + ALT
 vim.keymap.set("n", "<C-A-l>", ":tabnext<enter>")
