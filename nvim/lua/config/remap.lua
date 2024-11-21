@@ -79,6 +79,7 @@ vim.keymap.set("n", "<A-S-t>", "<C-w>T") -- send current to a newtab
 
 --   split navigation, ALT
 vim.keymap.set("n", "<A-v>", ":vsplit<enter>") -- open split to right
+vim.keymap.set("n", "<A-s>", ":split<enter>")  -- open split to bottom
 vim.keymap.set("n", "<A-t>", ":tabnew<enter>") -- open tab to right
 vim.keymap.set("n", "<A-e>", "<C-W>=<enter>")  -- equalize
 vim.keymap.set("n", "<A-h>", "<C-w>h")

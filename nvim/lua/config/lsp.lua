@@ -35,7 +35,7 @@ lspconfig.pylsp.setup {
     }
 }
 
-lspconfig.ruff_lsp.setup {}
+lspconfig.ruff.setup {}
 
 lspconfig.lua_ls.setup {
     on_init = function(client)

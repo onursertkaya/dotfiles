@@ -34,7 +34,7 @@ end
 function M.termit_new()
     vim.ui.input({ prompt = "Terminal name: " }, function(term_name)
         vim.cmd("tabnew | terminal")
-        vim.cmd("file " .. term_name)
+        vim.cmd("file termit_" .. term_name)
     end)
 
 end

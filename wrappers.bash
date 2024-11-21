@@ -108,7 +108,7 @@ brightness_down() {
 }
 
 rename_window() {
-    xdotool set_window --name "$1" $(xdotool getactivewindow)
+    xdotool set_window --name "$2" $(xdotool getactivewindow)
 }
 
 shot() {

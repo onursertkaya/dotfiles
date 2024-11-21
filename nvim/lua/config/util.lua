@@ -38,11 +38,15 @@ function M.yank_word_under_cursor_to_register_interactive()
     end)
 end
 
+function M.get_repo_name()
+    local cwd = vim.fn.getcwd()
+    return cwd:sub(cwd:match("^.*()/") + 1, -1)
+end
+
 function M.replace_string_to_cwd(text, to_replace)
     -- replace "to_replace" to cwd
     if text:sub(1, #to_replace) == to_replace then
-        local cwd = vim.fn.getcwd()
-        return cwd:sub(cwd:match("^.*()/") + 1, -1)
+        return M.get_repo_name()
     end
     return text
 end

@@ -56,7 +56,7 @@ alias grep='grep --color=auto'
 alias ga='git commit -a --amend'
 alias gt='git log --all --graph --pretty="format:%C(yellow)%h%Creset [%><(18,trunc)%Cblue%an%Creset] %s %C(auto)%d%Creset"';
 alias gd='git diff HEAD^ --stat'
-alias gdd='git diff'
+alias gdd='git diff HEAD^'
 alias gs='git status'
 alias gc='git checkout $(git branch | fzf)'
 alias gp='git pull origin master'

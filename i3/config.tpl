@@ -1,6 +1,6 @@
 set $mod Mod4
 
-font pango:Roboto mono 9
+font pango:Roboto mono 10
 
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 exec --no-startup-id nm-applet
@@ -172,7 +172,7 @@ bar {
     #status_command i3blocks -c ~/conf/dotfiles/i3/i3blocks.ini
     tray_output primary
     strip_workspace_numbers yes
-    font pango:Roboto mono 11
+    font pango:Roboto mono 12
     separator_symbol "//"
     position bottom
 

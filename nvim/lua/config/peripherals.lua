@@ -38,13 +38,49 @@ end
 local function tabline_format(name, ctx)
     local bufnr = vim.fn.tabpagebuflist(ctx.tabnr)[vim.fn.tabpagewinnr(ctx.tabnr)]
     if bufnr == require("termit").term_buf then
-        return " ⚒  "
+        return "[T] " .. require("util").get_repo_name()
+    elseif vim.bo[bufnr].buftype == 'terminal' then
+        return "[T] " .. vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':t')
     else
         return rename_no_name(name)
     end
 end
 
-require("lualine").setup {
+local function show_macro_recording()
+    local recording_register = vim.fn.reg_recording()
+    if recording_register == "" then
+        return ""
+    else
+        return "Recording @" .. recording_register
+    end
+end
+
+-- https://www.reddit.com/r/neovim/comments/xy0tu1/cmdheight0_recording_macros_message/
+local lualine = require("lualine")
+vim.api.nvim_create_autocmd("RecordingEnter", {
+    callback = function()
+        lualine.refresh({
+            place = { "statusline" },
+        })
+    end,
+})
+
+vim.api.nvim_create_autocmd("RecordingLeave", {
+    callback = function()
+        local timer = vim.loop.new_timer()
+        timer:start(
+            50,
+            0,
+            vim.schedule_wrap(function()
+                lualine.refresh({
+                    place = { "statusline" },
+                })
+            end)
+        )
+    end,
+})
+
+lualine.setup {
     options = {
         section_separators = "",
         component_separators = "",
@@ -59,6 +95,11 @@ require("lualine").setup {
             {
                 "filename",
                 fmt = rename_no_name,
+            },
+            {
+                "macro-recording",
+                color = { fg = '#ffaa88', gui = 'bold' },
+                fmt = show_macro_recording,
             }
         }
     },
