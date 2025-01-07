@@ -12,7 +12,7 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 " package management
 Plug 'williamboman/mason.nvim', { 'do': ':MasonUpdate' }
-Plug 'williamboman/mason-lspconfig.nvim'
+Plug 'williamboman/mason-lspconfig.nvim', { 'do': ':PylspInstall pyls-isort pylsp-mypy python-lsp-black'}
 " ----
 
 " user interface
