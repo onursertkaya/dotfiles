@@ -6,7 +6,7 @@
 
 configuration {
     show-icons: true;
-    font: "Roboto Bold 11";
+    font: "Ubuntu Mono Bold 10";
 }
 
 * {
@@ -23,7 +23,7 @@ configuration {
     lightbg:                     rgba ( 238, 232, 213, 100 % );
     selected-active-foreground:  rgba ( 166, 226, 42, 100 % );
     alternate-active-background: rgba ( 39, 40, 34, 0 % );
-    background:                  rgba ( 29, 39, 46, 95 % );
+    background:                  rgba ( 0, 0, 0, 95 % );
     bordercolor:                 rgba ( 0, 43, 54, 100 % );
     alternate-normal-foreground: @foreground;
     normal-background:           rgba ( 39, 40, 34, 0 % );

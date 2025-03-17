@@ -114,15 +114,17 @@ local function insert_signature_help()
 end
 
 local function get_lsp_completions()
-    local params = vim.lsp.util.make_position_params()
-    local results = vim.lsp.buf_request_sync(0, 'textDocument/completion', params, 1000)
-    local items = {}
+    local results = vim.lsp.buf_request_sync(0, 'textDocument/completion', vim.lsp.util.make_position_params(), 1000)
 
-    if results then
-        for _, res in pairs(results) do
-            if res.result then
-                local item = vim.lsp.util.extract_completion_items(res.result)
-                vim.list_extend(items, item)
+    local items = {}
+    for _, response in pairs(results or {}) do
+        if response and response.result then
+            local result = response.result
+
+            if result.items then
+                vim.list_extend(items, result.items)
+            elseif vim.tbl_islist(result) then
+                vim.list_extend(items, result)
             end
         end
     end

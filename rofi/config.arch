@@ -1,5 +1,0 @@
-configuration {
-    matching: "fuzzy";
-    sort: true;
-}
-

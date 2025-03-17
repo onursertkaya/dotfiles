@@ -12,23 +12,10 @@ alacritty_cc() {
     $CONF_ROOT/../tools/alacritty/target/release/alacritty --config-file "${CONF_ROOT}/alacritty.toml"
 }
 
-compositor_cc() {
-    if [[ $IS_UBUNTU = true ]]; then
-        compton --config "${CONF_ROOT}/compton.conf"
-    else
-        picom --config "${CONF_ROOT}/picom.conf"
-    fi
-}
-
 dunst_cc() {
-    # stop the dunst instance spawned by systemd, which
-    # is installed by i3.
+    # stop the dunst instance spawned by systemd, which is installed by i3.
     systemctl stop dunst --user
-    if [[ $IS_UBUNTU = true ]]; then
-        dunst -conf "${CONF_ROOT}/dunstrc"
-    else
-        dunst -conf "${CONF_ROOT}/dunstrc.arch"
-    fi
+    dunst -conf "${CONF_ROOT}/dunstrc"
 }
 
 rofi_show() {
@@ -41,52 +28,54 @@ rofi_window() {
 
 rofi_control() {
     declare -A actions=( \
-        ["Hibernate"]="system_hibernate" \
+        ["Turn off the screen"]="screen_turn_off" \
         ["Sleep"]="system_sleep" \
+        ["Hibernate"]="system_hibernate" \
         ["Shutdown"]="system_shutdown" \
         ["Reboot"]="system_reboot" \
         ["Lock"]="lock" \
         ["Toggle keyboard"]="kbd_toggle" \
         ["Init keyboard"]="kbd_init" \
         ["Screenshot"]="shot" \
-        ["Turn off the screen"]="screen_turn_off" \
         ["Switch to external screen"]="homescreen" \
         ["Switch to main screen"]="noscreen" \
+        ["Logout"]="i3_logout" \
     );
-    actions_with_icons=( \
-        '❄\tHibernate' \
-        '\tSleep' \
-        '\tShutdown' \
-        '↺\tReboot' \
-        '\tLock' \
-        '\tToggle keyboard' \
-        '\tInit keyboard' \
-        '\tScreenshot' \
-        '\tTurn off the screen' \
-        '\tSwitch to external screen' \
-        '\tSwitch to main screen' \
+    actions_selection=( \
+        'Turn off the screen' \
+        'Sleep' \
+        'Hibernate' \
+        'Shutdown' \
+        'Reboot' \
+        'Lock' \
+        'Toggle keyboard' \
+        'Init keyboard' \
+        'Screenshot' \
+        'Switch to external screen' \
+        'Switch to main screen' \
+        'Logout' \
     );
-    pick_str=$(printf '%b\n' "${actions_with_icons[@]}" | \
+    pick_str=$(printf '%b\n' "${actions_selection[@]}" | \
         rofi -disable-history -config "${CONF_ROOT}/rofi/config" -dmenu -p 'Control' -i);
-    picked_action=$(echo $pick_str | cut -f 2- -d' ');
-    eval ${actions[$picked_action]}
+    eval ${actions[$pick_str]}
 }
 
 # Custom commands ======================================================
-homescreen () {
-    xrandr
-    sleep 1
-    xrandr --output ${EXTERNAL_SCREEN} --auto --primary --dpi 144
-    xrandr --output ${LAPTOP_SCREEN}   --off
+noscreen() {
+    xrandr 2&>1 /dev/null
+    sleep 0.5
+    xrandr --output ${LAPTOP_SCREEN}   --auto --primary --dpi 144 --output ${EXTERNAL_SCREEN} --off
 }
 
-noscreen() {
-    xrandr
-    sleep 1
-
-    # laptop_screen=$(xrandr | grep -oP '\w.*(?=connected.*\d{4}x\d{4})')
-    xrandr --output ${LAPTOP_SCREEN}   --auto --primary --dpi 144
-    xrandr --output ${EXTERNAL_SCREEN} --off
+homescreen () {
+    xrandr 2&>1 /dev/null
+    sleep 0.5
+    if [[ -z $(xrandr | grep "${EXTERNAL_SCREEN} connected") ]]; then
+        # fallback
+        noscreen
+    fi
+    # xrandr --output ${EXTERNAL_SCREEN} --mode 3840x2160 --rate 30 --primary --dpi 144 --output ${LAPTOP_SCREEN} --off
+    xrandr --output ${EXTERNAL_SCREEN} --auto --primary --dpi 144 --output ${LAPTOP_SCREEN} --off
 }
 
 brightness_up() {
@@ -129,7 +118,11 @@ screen_turn_off() {
 }
 
 lock() {
-    i3lock -c 000000 && screen_turn_off
+    i3lock -i ~/Downloads/wp.png && screen_turn_off
+}
+
+i3_logout() {
+    i3-msg exit
 }
 
 kbd_init() {

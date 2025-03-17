@@ -1,8 +1,4 @@
-import = [
-    "~/.config/alacritty/themes/themes/kanagawa_wave.toml"
-]
-
-live_config_reload = true
+general.live_config_reload = true
 
 #[colors.normal]
 #black = "#1d1f21"
@@ -33,7 +29,7 @@ WINIT_X11_SCALE_FACTOR = "1"
 size = 14.0
 
 [font.normal]
-family = "Hack" # "Reddit Mono"  # "RobotoMono"
+family = "Ubuntu Mono" # "Reddit Mono"  # "RobotoMono"
 style = "Monospace"
 
 [font.offset]
