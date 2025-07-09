@@ -81,19 +81,19 @@ homescreen () {
 brightness_up() {
     curr_brightness=$(xrandr --verbose | grep -oP '(?<=Brightness:\s).*')
     increased=$(python3 -c \
-        'import sys; print(min(1.0, float(sys.argv[1])+0.1))' \
+        'import sys; print(min(100.0, float(sys.argv[1])+10))' \
         $curr_brightness)
 
-    xrandr --output ${LAPTOP_SCREEN} --brightness $increased
+    xbacklight -inc $increased
 }
 
 brightness_down() {
     curr_brightness=$(xrandr --verbose | grep -oP '(?<=Brightness:\s).*')
     decreased=$(python3 -c \
-        'import sys; print(max(0.1, float(sys.argv[1])-0.1))' \
+        'import sys; print(max(100.0, float(sys.argv[1])-10))' \
         $curr_brightness)
 
-    xrandr --output ${LAPTOP_SCREEN} --brightness $decreased
+    xbacklight -dec $decreased
 }
 
 rename_window() {
