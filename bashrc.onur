@@ -6,7 +6,22 @@ HISTSIZE=10000
 HISTFILESIZE=10000
 HISTCONTROL=ignoreboth:erasedups
 
-alias vim="nvim -u ${CONF_ROOT}/nvim/init.vim";
+dev() {
+    export DEVENV="${HOME}/.devenv";
+    if [[ -d $DEVENV ]]; then
+        source "${DEVENV}/lsp_deps/bin/activate";
+        nvim -u ${CONF_ROOT}/nvim/init.vim $1;
+        deactivate;
+    else
+        echo 'nvim launching for the first time, will install deps and exit [Y/n]'
+        read c;
+        if [[ $c == '' || $c == 'y' || $c == 'Y' ]] then
+            nvim -es -u ${CONF_ROOT}/nvim/init.vim -i NONE -c 'PlugInstall' -c 'qa';
+        else
+            echo 'done nothing';
+        fi
+    fi
+}
 
 alias pyh="PYTHONPATH=. python3"
 alias copy='xclip -selection clipboard'

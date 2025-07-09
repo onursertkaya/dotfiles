@@ -1,59 +1,47 @@
-" todo
-" git blame action in telescope preview
-" toggle line/visual comment, language-aware
-" harden autocomplete
+let g:devenv_path='$DEVENV'
+let g:initvim_path=expand("<sfile>")
 
-call plug#begin('~/.nvim_plugged')
-
-" lsp & treesitter
+call plug#begin(devenv_path .. '/plugged')
 Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/vim-vsnip'
+
+Plug 'williamboman/mason.nvim'
+
+Plug 'rebelot/kanagawa.nvim'
+
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-" ----
 
-" package management
-Plug 'williamboman/mason.nvim', { 'do': ':MasonUpdate' }
-Plug 'williamboman/mason-lspconfig.nvim', { 'do': ':PylspInstall pyls-isort pylsp-mypy python-lsp-black'}
-" ----
-
-" user interface
-"   PUM (fuzzy) search
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
 Plug 'nvim-telescope/telescope-file-browser.nvim'
-Plug 'nvim-tree/nvim-web-devicons'
 
-"   lines
 Plug 'nvim-lualine/lualine.nvim'
 
-"   git
 Plug 'lewis6991/gitsigns.nvim'
-" ----
-
-" themes
-Plug 'rebelot/kanagawa.nvim'
-Plug 'Shadorain/shadotheme'
-Plug 'rose-pine/neovim'
-Plug 'morhetz/gruvbox'
-Plug 'tomasiser/vim-code-dark'
-Plug 'sainnhe/everforest'
-Plug 'crispybaccoon/dawn.vim'
-Plug 'rafamadriz/neon'
-Plug 'DanielEliasib/sweet-fusion'
 
 call plug#end()
 
 
-let g:initvim_path=expand("<sfile>")
-
 lua << EOF
-local initvim_path = vim.g["initvim_path"]
-package.path = package.path .. ";" .. initvim_path:gsub("init.vim", "lua/config/?.lua")
-require("mason_conf")
-require("remap")
-require("lsp")
-require("opts")
-require("treesitter")
-require("peripherals")
-require("gitsigns_conf")
-EOF
+  local initvim_path = vim.g["initvim_path"]
+  package.path = package.path .. ";" .. initvim_path:gsub("init.vim", "lua/?.lua")
 
+  local devenv_path = vim.g["devenv_path"]
+
+  local deps = require("deps")
+  deps.install(devenv_path  .. "/lsp_deps")
+  require("cmp_conf").setup()
+  require("mason_conf").setup(devenv_path .. "/mason")
+  require("opts").setup()
+  require("theme").setup()
+  require("treesitter").setup()
+  require("peripherals").setup()
+  require("remap").setup()
+EOF
