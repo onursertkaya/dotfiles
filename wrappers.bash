@@ -29,6 +29,7 @@ rofi_window() {
 rofi_control() {
     declare -A actions=( \
         ["Turn off the screen"]="screen_turn_off" \
+        ["Cover the screen"]="screen_cover" \
         ["Sleep"]="system_sleep" \
         ["Hibernate"]="system_hibernate" \
         ["Shutdown"]="system_shutdown" \
@@ -43,6 +44,7 @@ rofi_control() {
     );
     actions_selection=( \
         'Turn off the screen' \
+        'Cover the screen' \
         'Sleep' \
         'Hibernate' \
         'Shutdown' \
@@ -119,6 +121,10 @@ screen_turn_off() {
 
 lock() {
     i3lock -i ~/Downloads/wp.png && screen_turn_off
+}
+
+screen_cover() {
+    python3 "${CONF_ROOT}/screencover.py"
 }
 
 i3_logout() {
