@@ -28,6 +28,7 @@ Plug 'lewis6991/gitsigns.nvim'
 
 call plug#end()
 
+packadd! termdebug
 
 lua << EOF
   local initvim_path = vim.g["initvim_path"]
