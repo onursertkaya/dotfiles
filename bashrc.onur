@@ -23,6 +23,10 @@ dev() {
     fi
 }
 
+edit() {
+    nvim -u ${CONF_ROOT}/nvim/initlite.vim $1;
+}
+
 alias pyh="PYTHONPATH=. python3"
 alias copy='xclip -selection clipboard'
 
