@@ -34,6 +34,7 @@ bindsym $mod+Return      exec "wrappers.bash alacritty_cc", workspace number $ws
 bindsym $mod+space       exec --no-startup-id "wrappers.bash rofi_control"
 bindsym $mod+d           exec --no-startup-id "wrappers.bash rofi_show"
 bindsym $mod+f           exec --no-startup-id "wrappers.bash rofi_window"
+bindsym $mod+t           exec --no-startup-id "wrappers.bash alacritty_cc htop"
 bindsym $mod+Ctrl+space  exec --no-startup-id "wrappers.bash kbd_toggle"
 
 bindsym $mod+Ctrl+1 exec --no-startup-id "wrappers.bash noscreen"
@@ -222,6 +223,7 @@ assign [class="firefox_firefox"] number $ws1
 assign [class="Google-chrome"] number $ws1
 
 for_window [class="Matplotlib"] floating enable
+for_window [class="floating"] floating enable move position center
 
 # appearance
 hide_edge_borders smart

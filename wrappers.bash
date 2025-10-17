@@ -11,7 +11,11 @@ source ~/.conf_root
 # "custom config." =====================================================
 
 alacritty_cc() {
-    $CONF_ROOT/../tools/alacritty/target/release/alacritty --config-file "${CONF_ROOT}/alacritty.toml"
+    if [[ $# -ne 0 ]]; then
+        $CONF_ROOT/../tools/alacritty/target/release/alacritty --config-file "${CONF_ROOT}/alacritty.toml" --class floating -e "$@"
+    else
+        $CONF_ROOT/../tools/alacritty/target/release/alacritty --config-file "${CONF_ROOT}/alacritty.toml"
+    fi
 }
 
 dunst_cc() {
@@ -211,4 +215,4 @@ system_shutdown() {
 system_reboot() {
     systemctl reboot
 }
-eval ${1}
+eval ${1} ${@:2}
