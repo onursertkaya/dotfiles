@@ -10,15 +10,19 @@ local function setup_telescope()
   telescope.setup({
     pickers = {
       find_files = {
+        hidden = true,
         mappings = {
           i = {
             ["<C-f>"] = tls_util.make_telescope_grep_in_dir_picker(),
           },
         },
       },
+      grep_string = { additional_args= { "--hidden", "-g", "!.git" } },
+      live_grep = { additional_args= { "--hidden", "-g", "!.git"} },
     },
     extensions = {
       file_browser = {
+        hidden = true,
         grouped = true,
         dir_icon = "📁",
         hijack_netrw = true,

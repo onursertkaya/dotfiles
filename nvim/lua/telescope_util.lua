@@ -45,6 +45,8 @@ function M.make_telescope_grep_in_dir_picker()
     require("telescope.builtin").live_grep({
       search_dirs = { selection[1] },
       prompt_title = string.format("Grep in [%s]", selection[1]),
+      -- TODO: fix, doesn't work as it works for live_grep and grep_string builtins
+      --vimgrep_arguments = { "--hidden" },
     })
   end
 end
