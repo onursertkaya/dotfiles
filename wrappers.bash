@@ -1,7 +1,9 @@
 #!/bin/bash
 
-LAPTOP_SCREEN="DP-4"
-EXTERNAL_SCREEN="HDMI-0"
+LAPTOP_SCREEN="eDP-1"
+_external_screen() {
+    echo "$(xrandr | grep ' connected' | grep -v $LAPTOP_SCREEN | awk '{ print $1 }')"
+}
 
 source ~/.conf_root
 
@@ -35,10 +37,11 @@ rofi_control() {
         ["Shutdown"]="system_shutdown" \
         ["Reboot"]="system_reboot" \
         ["Lock"]="lock" \
-        ["Toggle keyboard"]="kbd_toggle" \
-        ["Init keyboard"]="kbd_init" \
+        ["English keyboard"]="kbd_en" \
+        ["Swedish keyboard"]="kbd_sve" \
+        ["Turkish keyboard"]="kbd_tr" \
         ["Screenshot"]="shot" \
-        ["Switch to external screen"]="homescreen" \
+        ["Switch to external screen"]="externalscreen" \
         ["Switch to main screen"]="noscreen" \
         ["Logout"]="i3_logout" \
     );
@@ -50,8 +53,9 @@ rofi_control() {
         'Shutdown' \
         'Reboot' \
         'Lock' \
-        'Toggle keyboard' \
-        'Init keyboard' \
+        'English keyboard' \
+        'Swedish keyboard' \
+        'Turkish keyboard' \
         'Screenshot' \
         'Switch to external screen' \
         'Switch to main screen' \
@@ -66,18 +70,25 @@ rofi_control() {
 noscreen() {
     xrandr 2&>1 /dev/null
     sleep 0.5
-    xrandr --output ${LAPTOP_SCREEN}   --auto --primary --dpi 144 --output ${EXTERNAL_SCREEN} --off
+    turn_others_off=$(xrandr | grep -oE '^[a-zA-Z0-9\-]+ (dis)?connected' | \
+        awk '{print "--output " $1 " --off"}' ORS=' ');
+    xrandr $turn_others_off
+    xrandr --output ${LAPTOP_SCREEN} --auto --primary --dpi 144
 }
 
-homescreen () {
+externalscreen () {
     xrandr 2&>1 /dev/null
     sleep 0.5
-    if [[ -z $(xrandr | grep "${EXTERNAL_SCREEN} connected") ]]; then
+    external=$(_external_screen)
+    if [[ -z $(xrandr | grep "${external} connected") ]]; then
         # fallback
         noscreen
     fi
-    # xrandr --output ${EXTERNAL_SCREEN} --mode 3840x2160 --rate 30 --primary --dpi 144 --output ${LAPTOP_SCREEN} --off
-    xrandr --output ${EXTERNAL_SCREEN} --auto --primary --dpi 144 --output ${LAPTOP_SCREEN} --off
+
+    turn_others_off=$(xrandr | grep -oE '^[a-zA-Z0-9\-]+ (dis)?connected' | \
+        awk '{print "--output " $1 " --off"}' ORS=' ');
+    xrandr $turn_others_off
+    xrandr --output ${external} --auto --primary --dpi 144
 }
 
 brightness_up() {
@@ -131,13 +142,8 @@ i3_logout() {
     i3-msg exit
 }
 
-kbd_init() {
-    xset r rate 170 40  # time-out & repeat speed
-    setxkbmap -option
-    setxkbmap -layout us
-}
-
 kbd_toggle() {    
+    kbd_init
     case \
         $(setxkbmap -query | grep layout | cut -f2 -d ':' | xargs echo | cut -f1 -d ',') \
         in
@@ -157,6 +163,29 @@ kbd_toggle() {
         notify-send "ERROR";
         ;;
     esac
+}
+
+kbd_init() {
+    xset r rate 170 40  # time-out & repeat speed
+    setxkbmap -option
+}
+
+kbd_en() {
+    kbd_init
+    setxkbmap -layout us
+    notify-send 'keyboard layout: english'
+}
+
+kbd_sve() {
+    kbd_init
+    setxkbmap -layout se
+    notify-send 'keyboard layout: swedish'
+}
+
+kbd_tr() {
+    kbd_init
+    setxkbmap -layout tr
+    notify-send 'keyboard layout: turkish'
 }
 
 # systemctl suspend writes the state to ram

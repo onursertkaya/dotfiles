@@ -11,7 +11,7 @@ exec --no-startup-id nm-applet
 exec --no-startup-id "wrappers.bash kbd_init"
 exec --no-startup-id "wrappers.bash dunst_cc"
 exec --no-startup-id "blueman-applet"
-exec --no-startup-id "wrappers.bash homescreen && feh --bg-scale ~/Downloads/wp.jpg && picom --config picom.conf --daemon && i3-msg restart > /dev/null"
+exec --no-startup-id "wrappers.bash externalscreen && feh --bg-scale ~/Downloads/wp.png && picom --config picom.conf --daemon && i3-msg restart > /dev/null"
 
 
 # media shortcuts
@@ -36,7 +36,7 @@ bindsym $mod+d      exec --no-startup-id "wrappers.bash rofi_show"
 bindsym $mod+f      exec --no-startup-id "wrappers.bash rofi_window"
 
 bindsym $mod+Ctrl+1 exec --no-startup-id "wrappers.bash noscreen"
-bindsym $mod+Ctrl+2 exec --no-startup-id "wrappers.bash homescreen"
+bindsym $mod+Ctrl+2 exec --no-startup-id "wrappers.bash externalscreen"
 
 bindsym Print exec --no-startup-id "wrappers.bash shot"
 bindsym $mod+Escape exec --no-startup-id "dunstctl close-all"
