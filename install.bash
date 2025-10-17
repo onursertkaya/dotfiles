@@ -57,9 +57,3 @@ if [[ -n $(pidof picom) ]]; then
 fi
 picom --config ${CONF_ROOT}/picom.conf --daemon
 
-
-# Configure rofi
-rofi_theme="${CONF_ROOT}/rofi/Monokai-onur.rasi"
-rofi_target="${CONF_ROOT}/rofi/config"
-
-append_to_file $rofi_target $rofi_theme

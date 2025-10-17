@@ -30,10 +30,11 @@ tiling_drag modifier titlebar
 
 
 # control shortcuts
-bindsym $mod+Return exec "wrappers.bash alacritty_cc", workspace number $ws9
-bindsym $mod+space  exec --no-startup-id "wrappers.bash rofi_control"
-bindsym $mod+d      exec --no-startup-id "wrappers.bash rofi_show"
-bindsym $mod+f      exec --no-startup-id "wrappers.bash rofi_window"
+bindsym $mod+Return      exec "wrappers.bash alacritty_cc", workspace number $ws9
+bindsym $mod+space       exec --no-startup-id "wrappers.bash rofi_control"
+bindsym $mod+d           exec --no-startup-id "wrappers.bash rofi_show"
+bindsym $mod+f           exec --no-startup-id "wrappers.bash rofi_window"
+bindsym $mod+Ctrl+space  exec --no-startup-id "wrappers.bash kbd_toggle"
 
 bindsym $mod+Ctrl+1 exec --no-startup-id "wrappers.bash noscreen"
 bindsym $mod+Ctrl+2 exec --no-startup-id "wrappers.bash externalscreen"
@@ -104,9 +105,6 @@ bindsym $mod+Shift+8 move container to workspace number $ws7
 bindsym $mod+Shift+9 move container to workspace number $ws8
 bindsym $mod+Shift+0 move container to workspace number $ws9
 
-
-bindsym F10 exec "pass pass_s"
-bindsym F9 exec "pass user_s"
 
 # modes
 set $control_mode "i3 control [ e | c | r ]"
@@ -220,6 +218,7 @@ client.focused          #4c7899       #285577      #ffffff              #aaaa00 
 # app-specific workspaces
 assign [class="Alacritty"]     number $ws9
 assign [class="Slack"]         number $ws0
+assign [class="firefox_firefox"] number $ws1
 assign [class="Google-chrome"] number $ws1
 
 for_window [class="Matplotlib"] floating enable
