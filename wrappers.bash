@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LAPTOP_SCREEN="eDP-1"
+LAPTOP_SCREEN="eDP1"
 _external_screen() {
     echo "$(xrandr | grep ' connected' | grep -v $LAPTOP_SCREEN | awk '{ print $1 }')"
 }
@@ -77,7 +77,7 @@ noscreen() {
     turn_others_off=$(xrandr | grep -oE '^[a-zA-Z0-9\-]+ (dis)?connected' | \
         awk '{print "--output " $1 " --off"}' ORS=' ');
     xrandr $turn_others_off
-    xrandr --output ${LAPTOP_SCREEN} --auto --primary --dpi 144
+    xrandr --output ${LAPTOP_SCREEN} --auto --primary --dpi 72
 }
 
 externalscreen () {
@@ -92,25 +92,43 @@ externalscreen () {
     turn_others_off=$(xrandr | grep -oE '^[a-zA-Z0-9\-]+ (dis)?connected' | \
         awk '{print "--output " $1 " --off"}' ORS=' ');
     xrandr $turn_others_off
-    xrandr --output ${external} --auto --primary --dpi 144
+    xrandr --output ${external} --auto --primary --dpi 72
+}
+
+volume_curr() {
+    pactl get-sink-volume @DEFAULT_SINK@ | head -n1 | awk '{print $5}' | grep -oE '[0-9]+'
+}
+
+volume_up() {
+    notify-send "Volume" -h "int:value:$(volume_curr)"
+    pactl set-sink-volume @DEFAULT_SINK@ +10%
+}
+
+volume_down() {
+    notify-send "Volume" -h "int:value:$(volume_curr)"
+    pactl set-sink-volume @DEFAULT_SINK@ -10%
+}
+
+volume_mute_toggle() {
+    pactl set-sink-mute @DEFAULT_SINK@ toggle
+}
+
+mic_mute_toggle() {
+    pactl set-source-mute @DEFAULT_SOURCE@ toggle
+}
+
+brightness_curr() {
+    printf '%0.f' $(xbacklight)
 }
 
 brightness_up() {
-    curr_brightness=$(xrandr --verbose | grep -oP '(?<=Brightness:\s).*')
-    increased=$(python3 -c \
-        'import sys; print(min(100.0, float(sys.argv[1])+10))' \
-        $curr_brightness)
-
-    xbacklight -inc $increased
+    notify-send "Brightness" -h "int:value:$(brightness_curr)"
+    xbacklight -inc 10
 }
 
 brightness_down() {
-    curr_brightness=$(xrandr --verbose | grep -oP '(?<=Brightness:\s).*')
-    decreased=$(python3 -c \
-        'import sys; print(max(100.0, float(sys.argv[1])-10))' \
-        $curr_brightness)
-
-    xbacklight -dec $decreased
+    notify-send "Brightness" -h "int:value:$(brightness_curr)"
+    xbacklight -dec 10
 }
 
 rename_window() {

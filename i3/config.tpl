@@ -5,7 +5,6 @@ font pango:Ubuntu Mono 13
 
 # startup
 # pasystray is started by i3
-exec --no-startup-id /usr/libexec/gsd-xsettings
 exec --no-startup-id dex --autostart --environment i3
 exec --no-startup-id nm-applet
 exec --no-startup-id "wrappers.bash kbd_init"
@@ -16,12 +15,12 @@ exec --no-startup-id "wrappers.bash externalscreen && feh --bg-scale ~/Downloads
 
 # media shortcuts
 set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
-bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
-bindsym XF86MonBrightnessUp exec --no-startup-id "wrappers.bash brightness_up"
-bindsym XF86MonBrightnessDown exec --no-startup-id "wrappers.bash brightness_down"
+bindsym XF86AudioRaiseVolume  exec --no-startup-id wrappers.bash volume_up   && $refresh_i3status
+bindsym XF86AudioLowerVolume  exec --no-startup-id wrappers.bash volume_down && $refresh_i3status
+bindsym XF86AudioMute         exec --no-startup-id wrappers.bash volume_mute_toggle && $refresh_i3status
+bindsym XF86AudioMicMute      exec --no-startup-id wrappers.bash mic_mute_toggle    && $refresh_i3status
+bindsym XF86MonBrightnessUp   exec --no-startup-id wrappers.bash brightness_up
+bindsym XF86MonBrightnessDown exec --no-startup-id wrappers.bash brightness_down
 
 
 # mouse control on windows
@@ -34,7 +33,7 @@ bindsym $mod+Return      exec "wrappers.bash alacritty_cc", workspace number $ws
 bindsym $mod+space       exec --no-startup-id "wrappers.bash rofi_control"
 bindsym $mod+d           exec --no-startup-id "wrappers.bash rofi_show"
 bindsym $mod+f           exec --no-startup-id "wrappers.bash rofi_window"
-bindsym $mod+t           exec --no-startup-id "wrappers.bash alacritty_cc htop"
+bindsym $mod+t           exec --no-startup-id "wrappers.bash alacritty_cc btop -u 1000"
 bindsym $mod+Ctrl+space  exec --no-startup-id "wrappers.bash kbd_toggle"
 
 bindsym $mod+Ctrl+1 exec --no-startup-id "wrappers.bash noscreen"
@@ -188,27 +187,25 @@ bar {
     separator_symbol "//"
     position bottom
 
-    #colors {
-    #    background $background
+    colors {
+        background $background
 
-    #    statusline $text_urgent_faint
-    #    separator  $separator
+        #                  # <colorclass> <border>      <background>  <text>
+        focused_workspace  $background    $background   $white
+        active_workspace   $background    $background   $text_1
 
-    #    # <colorclass>     <border>     <background>  <text>
-    #    focused_workspace  $background  $background   $white
-    #    active_workspace   $background  $background   $text_1 
-    #    inactive_workspace $background  $background   $text_1
-
-    #    urgent_workspace   $background  $background   $text_urgent
-    #    binding_mode       $background  $background   $text_urgent
-    #}
+        #statusline         $text_urgent_faint
+        #separator          $separator
+        #inactive_workspace $background  $background   $text_1
+        #urgent_workspace   $background  $background   $text_urgent
+        #binding_mode       $background  $background   $text_urgent
+    }
 }
 
 
 # window frame
-# class                 border        backgr.      text                indicator  child_border
-client.focused          #4c7899       #285577      #ffffff              #aaaa00   #d6794d
-#client.focused          $background   $background  $text_urgent_faint  $white     #cccccc
+# class                  border        backgr.      text                indicator  child_border
+client.focused           $background   $background  $text_urgent_faint  $white     #cccccc
 #client.focused_inactive $background   $background  $gray               $white     #777777
 #client.unfocused        $background   $background  $gray               $white     #333333
 #client.urgent           #background   #cc2458      $text_urgent
@@ -222,6 +219,7 @@ assign [class="Slack"]         number $ws0
 assign [class="firefox_firefox"] number $ws1
 assign [class="Google-chrome"] number $ws1
 
+for_window [class="org.gnome.Nautilus"] floating enable
 for_window [class="Matplotlib"] floating enable
 for_window [class="floating"] floating enable move position center
 
