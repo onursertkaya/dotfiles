@@ -24,7 +24,7 @@ function M.termit_global()
   if M.term_buf == nil then
     M.prev_buf = vim.api.nvim_get_current_buf()
     M.term_buf = vim.api.nvim_create_buf(true, false)
-    vim.cmd(string.format("$tabnew | buffer %s | terminal", M.term_buf))
+    vim.cmd(string.format("$tabnew | buffer %s | terminal env -u VIRTUAL_ENV -u VIRTUAL_ENV_PROMPT PATH=%s bash", M.term_buf, os.getenv("DEFAULT_PATH")))
     vim.cmd("file termit_main")
   else
     if is_active() and M.prev_buf ~= nil then

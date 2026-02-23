@@ -7,9 +7,11 @@ HISTFILESIZE=10000
 HISTCONTROL=ignoreboth:erasedups
 
 dev() {
+    export DEFAULT_PATH=$(bash -l -c 'echo $PATH')
     export DEVENV="${HOME}/.devenv";
     if [[ -d $DEVENV ]]; then
         source "${DEVENV}/lsp_deps/bin/activate";
+        export PYTHONPATH="$PWD/.venv/lib/python3.12/site-packages:$PYTHONPATH"
         nvim -u ${CONF_ROOT}/nvim/init.vim $1;
         deactivate;
     else
