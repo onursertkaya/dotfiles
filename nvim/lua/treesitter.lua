@@ -1,30 +1,28 @@
 local M = {}
 
 function M.setup()
-  require("nvim-treesitter.configs").setup({
-    ensure_installed = {
+
+  require'nvim-treesitter'.setup {
+    -- Directory to install parsers and queries to (prepended to `runtimepath` to have priority)
+    install_dir = vim.fn.stdpath('data') .. '/site'
+  }
+
+  require'nvim-treesitter'.install {
+      "bash",
       "c",
       "cpp",
       "cuda",
       "lua",
       "json",
+      "make",
       "vim",
       "vimdoc",
       "query",
       "sql",
       "python",
-    },
-    sync_install = false,
-    auto_install = true,
+      "toml",
+  }
 
-    ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
-    -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
-
-    highlight = {
-      enable = true,
-      additional_vim_regex_highlighting = false,
-    },
-  })
 end
 
 return M
