@@ -1,17 +1,5 @@
-general.live_config_reload = true
-
-#[colors.normal]
-#black = "#1d1f21"
-#blue = "#81a2be"
-#cyan = "#8abeb7"
-#green = "#b5bd68"
-#magenta = "#b294bb"
-#red = "#cc6666"
-#white = "#c5c8c6"
-#yellow = "#f0c674"
-#
-#[colors.primary]
-#background = "#1f1f28"
+[general]
+live_config_reload = true
 
 [cursor]
 blink_interval = 400
@@ -26,10 +14,10 @@ GDK_PIXBUF_MODULE_FILE = ""
 WINIT_X11_SCALE_FACTOR = "1"
 
 [font]
-size = 14.0
+size = 15.0
 
 [font.normal]
-family = "Ubuntu Mono" # "Reddit Mono"  # "RobotoMono"
+family = "Ubuntu Mono Nerd Font"
 style = "Monospace"
 
 [font.offset]
