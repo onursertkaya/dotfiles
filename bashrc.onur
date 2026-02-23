@@ -8,11 +8,20 @@ HISTCONTROL=ignoreboth:erasedups
 
 dev() {
     export DEFAULT_PATH=$(bash -l -c 'echo $PATH')
-    export DEVENV="${HOME}/.devenv";
-    if [[ -d $DEVENV ]]; then
-        source "${DEVENV}/lsp_deps/bin/activate";
-        export PYTHONPATH="$PWD/.venv/lib/python3.12/site-packages:$PYTHONPATH"
+    export DEVENV_PATH="${HOME}/.devenv";
+    if [[ -d $DEVENV_PATH ]]; then
+        # activate the venv for lsp dependencies (ruff & ty)
+        source "${DEVENV_PATH}/lsp_deps/bin/activate";
+
+        # if the command is invoked from a dir which contains a .venv, bring it to nvim
+        # so that language server and tools can resolve project dependencies
+        if [[ -d '.venv' ]]; then
+            export PYTHONPATH=".venv/lib/python*/site-packages"
+        fi
+
         nvim -u ${CONF_ROOT}/nvim/init.vim $1;
+
+        unset PYTHONPATH
         deactivate;
     else
         echo 'nvim launching for the first time, will install deps and exit [Y/n]'

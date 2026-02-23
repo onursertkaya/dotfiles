@@ -1,4 +1,4 @@
-let g:devenv_path='$DEVENV'
+let g:devenv_path='$DEVENV_PATH'
 let g:initvim_path=expand("<sfile>")
 
 call plug#begin(devenv_path .. '/plugged')
@@ -35,7 +35,7 @@ lua << EOF
   local initvim_path = vim.g["initvim_path"]
   package.path = package.path .. ";" .. initvim_path:gsub("init.vim", "lua/?.lua")
 
-  local devenv_path = vim.g["devenv_path"]
+  local devenv_path = os.getenv(vim.g["devenv_path"]:sub(2))  -- skip the preceding $
 
   local deps = require("deps")
   deps.install(devenv_path  .. "/lsp_deps")
