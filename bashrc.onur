@@ -16,9 +16,8 @@ dev() {
         # if the command is invoked from a dir which contains a .venv, bring it to nvim
         # so that language server and tools can resolve project dependencies
         if [[ -d '.venv' ]]; then
-            export PYTHONPATH=".venv/lib/python*/site-packages"
+            export PYTHONPATH="$(.venv/bin/python3 -c 'import site; print(site.getsitepackages()[0])')"
         fi
-
         nvim -u ${CONF_ROOT}/nvim/init.vim $1;
 
         unset PYTHONPATH
