@@ -2,6 +2,10 @@ local function launch_mason()
   vim.cmd("Mason")
 end
 
+local function update_plugins()
+  vim.cmd("PlugUpdate")
+end
+
 local function telescope_show_mappings()
   require("telescope.builtin").keymaps()
 end
@@ -132,6 +136,7 @@ local normal_mode_actions = {
   },
   { "show mappings", telescope_show_mappings },
   { "launch mason", launch_mason },
+  { "update plugins", update_plugins },
   {
     "yank word under cursor to register",
     util.yank_word_under_cursor_to_register_interactive,
