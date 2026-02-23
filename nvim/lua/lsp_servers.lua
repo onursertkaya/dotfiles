@@ -15,15 +15,30 @@ function M.configure()
   }
 
   vim.lsp.config.ty = {
-      settings = {},
+    settings = {},
   }
 
+  vim.lsp.config("lua_ls", {
+    settings = {
+      Lua = {
+        diagnostics = {
+          globals = { "vim" },
+        },
+        workspace = {
+          checkThirdParty = false,
+        },
+      },
+    },
+  })
 end
 
 function M.enable()
   vim.lsp.enable("clangd")
+
   vim.lsp.enable("ruff")
   vim.lsp.enable("ty")
+
+  vim.lsp.enable("lua_ls")
 end
 
 return M

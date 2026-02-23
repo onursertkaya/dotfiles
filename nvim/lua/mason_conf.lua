@@ -6,7 +6,7 @@ function M.setup(package_dir)
   })
 
   if os.execute("type clangd") ~= 0 then
-    vim.cmd(":MasonInstall clangd clang-format")
+    vim.cmd(":MasonInstall clangd clang-format stylua lua-language-server")
   end
 end
 

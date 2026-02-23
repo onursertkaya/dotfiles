@@ -19,7 +19,7 @@ local function setup_telescope()
         },
       },
       grep_string = { additional_args = { "--hidden", "-g", "!.git" } },
-      live_grep = { additional_args = { "--hidden", "-g", "!.git"} },
+      live_grep = { additional_args = { "--hidden", "-g", "!.git" } },
     },
     extensions = {
       file_browser = {

@@ -137,7 +137,7 @@ local function set_language_autocmd()
 end
 
 local function set_lsp_keymap(opts)
-  if not util.item_in(vim.bo.filetype, { "cpp", "python", "cuda", "c" }) then
+  if not util.item_in(vim.bo.filetype, { "cpp", "python", "cuda", "c", "lua" }) then
     return
   end
 
@@ -178,7 +178,7 @@ end
 
 local function set_lsp_autocmd()
   vim.api.nvim_create_autocmd("LspAttach", {
-    pattern = { "*.c", "*.cpp", "*.h", "*.hpp", "*.cu", "*.py" },
+    pattern = { "*.c", "*.cpp", "*.h", "*.hpp", "*.cu", "*.py", "*.lua" },
     group = vim.api.nvim_create_augroup("UserLspConfig", {}),
     callback = function(ev)
       vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
