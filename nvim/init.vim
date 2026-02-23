@@ -27,6 +27,8 @@ Plug 'nvim-tree/nvim-web-devicons'
 
 Plug 'lewis6991/gitsigns.nvim'
 
+Plug 'windwp/nvim-autopairs'
+
 call plug#end()
 
 packadd! termdebug
@@ -46,4 +48,6 @@ lua << EOF
   require("treesitter").setup()
   require("peripherals").setup()
   require("remap").setup()
+
+  require("nvim-autopairs").setup()
 EOF
