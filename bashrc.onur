@@ -18,7 +18,7 @@ dev() {
         if [[ -d '.venv' ]]; then
             export PYTHONPATH="$(.venv/bin/python3 -c 'import site; print(site.getsitepackages()[0])')"
         fi
-        nvim -u ${CONF_ROOT}/nvim/init.vim $1;
+        nvim -u ${CONF_ROOT}/nvim/init.lua $1;
 
         unset PYTHONPATH
         deactivate;
